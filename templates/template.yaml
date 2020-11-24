@@ -1,0 +1,353 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+
+Metadata:
+  About:
+    Description: >
+      This template is provided by Trek10, Inc. and ConnectSense in partnership with AWS to provide
+      a quick and easy way to ingest and act on data provided by the ConnectSense IoT devices.
+
+Parameters:
+  QuickstartBucketName:
+    Type: String
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    ConstraintDescription: Quick Start bucket name can include numbers, lowercase
+      letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
+      (-).
+    Description: S3 bucket name for the Quick Start assets. This string can include
+      numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start
+      or end with a hyphen (-).
+  QSS3KeyPrefix:
+    AllowedPattern: ^[0-9a-zA-Z-/]*$
+    ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters,
+      uppercase letters, hyphens (-), and forward slash (/).
+    Description: S3 key prefix for the Quick Start assets. Quick Start key prefix
+      can include numbers, lowercase letters, uppercase letters, hyphens (-), and
+      forward slash (/).
+    Type: String
+  DataRetentionDays:
+    Description: Number of days to retain data from ConnectSense devices
+    Default: 30
+    Type: Number
+    MinValue: 1
+    MaxValue: 365
+
+Conditions:
+  S3HasPrefix: !Not
+    - !Equals
+      - ''
+      - !Ref 'QSS3KeyPrefix'
+
+Resources:
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev
+      Auth:
+        ApiKeyRequired: true
+
+  ApiGatewayUsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      ApiStages:
+        - ApiId: !Ref ApiGatewayApi
+          Stage: !Ref ApiGatewayApi.Stage
+      Description: QuickStart device usage plan.
+      Quota:
+        Limit: 10
+        Period: DAY
+      UsagePlanName: QuickstartUsagePlan
+
+  ApiKey:
+    Type: "AWS::ApiGateway::ApiKey"
+    Properties:
+      Description: Quickstart API key
+      Enabled: true
+  ApiGatewayUsagePlanKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId: !Ref ApiKey
+      KeyType: API_KEY
+      UsagePlanId: !Ref ApiGatewayUsagePlan
+
+  ### IOT RESOURCES ###
+  IoTAnalyticsChannel:
+    Type: AWS::IoTAnalytics::Channel
+    Properties:
+      # ChannelName: String
+      # ChannelStorage:
+      RetentionPeriod:
+        NumberOfDays: !Ref DataRetentionDays
+        Unlimited: false
+
+  IoTAnalyticsDatastore:
+    Type: "AWS::IoTAnalytics::Datastore"
+    Properties:
+      RetentionPeriod:
+        NumberOfDays: !Ref DataRetentionDays
+        Unlimited: false
+
+  IoTAnalyticsPipeline:
+    Type: "AWS::IoTAnalytics::Pipeline"
+    Properties:
+      PipelineActivities:
+        - Channel:
+            Name: "ChannelActivity"
+            ChannelName: !Ref IoTAnalyticsChannel
+            Next: "DatastoreActivity"
+          Datastore:
+            Name: "DatastoreActivity"
+            DatastoreName: !Ref IoTAnalyticsDatastore
+
+  IoTIngestionRule:
+    Type: AWS::IoT::TopicRule
+    Properties:
+      TopicRulePayload:
+        RuleDisabled: False
+        Actions:
+          - IotAnalytics:
+              ChannelName: !Ref IoTAnalyticsChannel
+              RoleArn: !GetAtt IoTAnalyticsRole.Arn
+        AwsIotSqlVersion: "2016-03-23"
+        Sql: >-
+          Select *, timestamp() AS timestamp, topic(2) AS thing_name, parse_time("yyyy-MM-dd'T'HH:mm:ss", timestamp()) as datetime FROM 'iot8020/+/metrics'
+        Description: "Shuttles ingestion to the IOTAnalyticsChannel"
+
+  IoTAnalyticsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "iot.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: IoTAnalyticsPublish
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: AllowAllUsersToListAccounts
+                Effect: Allow
+                Action:
+                  - iotanalytics:BatchPutMessage
+                  - s3:PutObject
+                Resource: "*"
+
+  IoTAnalyticsDataset:
+    Type: "AWS::IoTAnalytics::Dataset"
+    Properties:
+      DatasetName: "ConnectSenseQuickstartDataset"
+      Actions:
+        - ActionName: "SqlAction"
+          QueryAction:
+            SqlQuery: !Sub "select * from ${IoTAnalyticsDatastore}"
+      Triggers:
+        - Schedule:
+            ScheduleExpression: "rate(5 minutes)"
+
+  DevKitDevicePolicy:
+    Type: AWS::IoT::Policy
+    Properties:
+      PolicyName: !Sub ${AWS::StackName}-device-policy
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action: iot:Connect
+            Resource:
+              - Fn::Join:
+                  - ":"
+                  - - arn:aws:iot
+                    - Ref: AWS::Region
+                    - Ref: AWS::AccountId
+                    - client/${iot:ClientId}
+          - Effect: Allow
+            Action:
+              - iot:Publish
+              - iot:Receive
+            Resource:
+              - Fn::Join:
+                  - ":"
+                  - - arn:aws:iot
+                    - Ref: AWS::Region
+                    - Ref: AWS::AccountId
+                    - topic/$aws/things/${iot:Connection.Thing.ThingName}/*
+              - Fn::Join:
+                  - ":"
+                  - - arn:aws:iot
+                    - Ref: AWS::Region
+                    - Ref: AWS::AccountId
+                    - topic/$aws/things/${iot:Connection.Thing.ThingName}/shadow/*
+              - Fn::Join:
+                  - ":"
+                  - - arn:aws:iot
+                    - Ref: AWS::Region
+                    - Ref: AWS::AccountId
+                    - topic/iot8020/${iot:Connection.Thing.ThingName}/*
+              - Fn::Join:
+                  - ":"
+                  - - arn:aws:iot
+                    - Ref: AWS::Region
+                    - Ref: AWS::AccountId
+                    - topic/${iot:Connection.Thing.ThingName}/*
+          - Effect: Allow
+            Action: iot:Subscribe
+            Resource:
+              - Fn::Join:
+                  - ":"
+                  - - arn:aws:iot
+                    - Ref: AWS::Region
+                    - Ref: AWS::AccountId
+                    - topicfilter/$aws/things/${iot:Connection.Thing.ThingName}/*
+              - Fn::Join:
+                  - ":"
+                  - - arn:aws:iot
+                    - Ref: AWS::Region
+                    - Ref: AWS::AccountId
+                    - topicfilter/${iot:Connection.Thing.ThingName}/#
+              - Fn::Join:
+                  - ":"
+                  - - arn:aws:iot
+                    - Ref: AWS::Region
+                    - Ref: AWS::AccountId
+                    - topicfilter/$aws/things/${iot:Connection.Thing.ThingName}/shadow/*
+              - Fn::Join:
+                  - ":"
+                  - - arn:aws:iot
+                    - Ref: AWS::Region
+                    - Ref: AWS::AccountId
+                    - topicfilter/iot8020/${iot:Connection.Thing.ThingName}/*
+          - Effect: Allow
+            Action:
+              - iot:UpdateThingShadow
+              - iot:GetThingShadow
+            Resource:
+              - Fn::Join:
+                  - ":"
+                  - - arn:aws:iot
+                    - Ref: AWS::Region
+                    - Ref: AWS::AccountId
+                    - topic/$aws/things/${iot:Connection.Thing.ThingName}/shadow/*
+
+  ### LAMBDA FUNCTION RESOURCES ###
+  UploadDeviceManifest:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: 
+        Bucket: !Ref QuickstartBucketName
+        Key: !Sub ${QSS3KeyPrefix}functions/packages/UploadDeviceManifest.zip
+      Handler: api.upload_manifest
+      Role: !GetAtt ProvisionApiLambdaRole.Arn
+      Runtime: python3.8
+      Timeout: 300
+      Environment:
+        Variables:
+          DEVICE_POLICY: !Sub ${AWS::StackName}-device-policy
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Method: post
+            Path: /devices/new
+            RestApiId: !Ref ApiGatewayApi
+
+  ProcessAlerts:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: 
+          Bucket: !Ref QuickstartBucketName
+          Key: !Sub ${QSS3KeyPrefix}functions/packages/ProcessAlerts.zip
+      Handler: alerts.process_alerts
+      Role: !GetAtt ProcessAlertsLambdaRole.Arn
+      Runtime: python3.8
+      Timeout: 300
+      Environment:
+        Variables:
+          TOPIC_ARN: !Ref AlertsTopic
+      Events:
+        TemperatureExcess:
+          Type: IoTRule
+          Properties:
+            Sql: >-
+              Select *, topic(2) AS thing_name FROM 'iot8020/+/metrics' WHERE watts > 5.0
+
+  ### LAMBDA FUNCTION ROLES ###
+  ProcessAlertsLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+      Policies:
+        - PolicyName: "process-alerts-policy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "sns:Publish"
+                Resource: !Ref AlertsTopic
+
+  ProvisionApiLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        - "arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess"
+      Policies:
+        - PolicyName: "device-provisioning-api-role"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "iot:AddThingToThingGroup"
+                  - "iot:AttachPolicy"
+                  - "iot:AttachPrincipalPolicy"
+                  - "iot:AttachThingPrincipal"
+                  - "iot:CreateKeysAndCertificate"
+                  - "iot:CreatePolicy"
+                  - "iot:CreateThing"
+                  - "iot:DescribeCertificate"
+                  - "iot:DescribeThing"
+                  - "iot:DescribeThingType"
+                  - "iot:GetPolicy"
+                  - "iot:ListPolicies"
+                  - "iot:ListThingGroupsForThing"
+                  - "iot:ListThingPrincipals"
+                  - "iot:ListTargetsForPolicy"
+                  - "iot:DetachPolicy"
+                  - "iot:DetachThingPrincipal"
+                  - "iot:UpdateCertificate"
+                  - "iot:DeleteCertificate"
+                  - "iot:RegisterThing"
+                  - "iot:DeleteThing"
+                  - "iot:GetThingShadow"
+                  - "iot:DescribeEndpoint"
+                  - "iot:RegisterCertificateWithoutCA"
+                Resource: "*"
+
+  ## SNS TOPIC ##
+  AlertsTopic:
+    Type: AWS::SNS::Topic
