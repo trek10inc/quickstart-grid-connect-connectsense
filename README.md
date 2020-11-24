@@ -38,7 +38,6 @@ Also, we have a list of variables we need to set-up:
 4. packagesPath &rarr; Path to the packages folder
 5. sourcesPath &rarr; Path to the sources folder
 6. ApiGatewayUsagePlanLimit &rarr; Is the number of requests the user will be allowed to make to the API Gateway each day (default is 10)
-projectRoot &rarr; Name of the project root folder
 
 If all the variables all correctly setted-up, the command `deploy-all-project` will create all the necessary steps to let this project setted-up
 ```shell
