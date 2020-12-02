@@ -37,6 +37,7 @@ Also, we have a list of variables we need to set-up:
 3. templatePath &rarr; The path of the original sam template
 4. packagesPath &rarr; Path to the packages folder
 5. sourcesPath &rarr; Path to the sources folder
+6. ApiGatewayUsagePlanLimit &rarr; Is the number of requests the user will be allowed to make to the API Gateway each day (default is 10)
 projectRoot &rarr; Name of the project root folder
 
 If all the variables all correctly setted-up, the command `deploy-all-project` will create all the necessary steps to let this project setted-up
@@ -55,6 +56,8 @@ The steps involved in this process are:
 ## Getting API endpoint and API Key
 
 Once your stack has been deployed, open the CloudFormation console and select your deployed stack. In the "Resources" tab, find the resources with Logical IDs `ApiGatewayApi` and `ApiKey`, and open the links on their Physical IDs in two new tabs.
+
+The identifier of the API endpoint is being shown in the output of the CloudFormation deployment but you can also get it from the console.
 
 ![Links to ApiGatewayApi and ApiKey resources](assets/img/cloudformation.png)
 
