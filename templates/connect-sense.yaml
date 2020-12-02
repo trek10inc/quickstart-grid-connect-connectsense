@@ -6,18 +6,18 @@ Metadata:
     Description: >
       This template is provided by Trek10, Inc. and ConnectSense in partnership with AWS to provide
       a quick and easy way to ingest and act on data provided by the ConnectSense IoT devices.
-  'AWS::CloudFormation::Interface':
+  AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
-          default: IoT Configuration
+          default: AWS IoT Analytics Configuration
         Parameters:
           - DataRetentionDays
       - Label:
-          default: API Gateway Configuration
+          default: Amazon API Gateway Configuration
         Parameters:
           - ApiGatewayUsagePlanLimit
       - Label:
-          default: AWS Quick Start configuration
+          default: S3 Bucket Configuration
         Parameters:
           - QSS3BucketName
           - QSS3KeyPrefix
