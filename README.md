@@ -61,9 +61,9 @@ The identifier of the API endpoint is being shown in the output of the CloudForm
 
 ![Links to ApiGatewayApi and ApiKey resources](assets/img/cloudformation.png)
 
-**In the API Gateway API tab** click on the Stages tab, navigate to the dev stage and find `/devices/new POST`. There you will find the *Invoke URL*. Copy and save this URL, which will be used by your device to retrieve credentials.
+**If you go to the Outputs section** You will find the id of the API URL. In this example, the full url will be: https://falhu6lisf.execute-api.us-east-1.amazonaws.com/dev. Change it to match your instance. Copy and save this URL, which will be used by your device later to retrieve its credentials.
 
-![Invoke URL Location](assets/img/url.png)
+![Invoke URL Location](assets/img/apigateway-get-url.png)
 
 **In the Api Key tab** click "show" next to "API key"
 
