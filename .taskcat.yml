@@ -19,13 +19,12 @@ project:
 tests:
   grid-connect-connectsense:
     parameters:
-      QuickstartBucketName: "$[taskcat_autobucket]"
-      QSS3KeyPrefix: "quickstart-grid-connect-connectsense/"
-    template: templates/template.yaml
+      QSS3BucketName: "$[taskcat_autobucket]"
+    template: templates/connect-sense.template.yaml
     regions:
-      # - us-west-2
-      # - us-east-2
+      - us-west-2
+      - us-east-2
       - us-east-1
-      # - eu-west-1
-      # - eu-central-1
-      # - eu-west-2
+      - eu-west-1
+      - eu-central-1
+      - eu-west-2
