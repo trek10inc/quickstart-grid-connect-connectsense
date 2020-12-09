@@ -1,7 +1,9 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
-
+Description: ConnectSense deployment for ingestion of data from ConnectSense IoT devices. (qs-1rd76h0od)
 Metadata:
+  QuickStartDocumentation:
+    EntrypointName: "Launch deployment for ConnectSense IoT devices"
   About:
     Description: >
       This template is provided by Trek10, Inc. and ConnectSense in partnership with AWS to provide
@@ -9,15 +11,15 @@ Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
-          default: AWS IoT Analytics Configuration
+          default: AWS IoT Analytics configuration
         Parameters:
           - DataRetentionDays
       - Label:
-          default: Amazon API Gateway Configuration
+          default: Amazon API Gateway configuration
         Parameters:
           - ApiGatewayUsagePlanLimit
       - Label:
-          default: S3 Bucket Configuration
+          default: AWS Quick Start configuration
         Parameters:
           - QSS3BucketName
           - QSS3KeyPrefix
@@ -33,21 +35,16 @@ Metadata:
 
 Parameters:
   QSS3BucketName:
-    Type: String
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
-    ConstraintDescription: Quick Start bucket name can include numbers, lowercase
-      letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
-      (-).
-    Description: S3 bucket name for the Quick Start assets. This string can include
-      numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start
-      or end with a hyphen (-).
+    ConstraintDescription: Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
+    Default: aws-quickstart
+    Description: S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
+    Type: String
   QSS3KeyPrefix:
-    AllowedPattern: ^[0-9a-zA-Z-/]*$
-    ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters,
-      uppercase letters, hyphens (-), and forward slash (/).
-    Description: S3 key prefix for the Quick Start assets. Quick Start key prefix
-      can include numbers, lowercase letters, uppercase letters, hyphens (-), and
-      forward slash (/).
+    AllowedPattern: ^([0-9a-zA-Z-.]+/)*$
+    ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), dots (.) and forward slash (/). The prefix should end with a forward slash (/).
+    Default: quickstart-grid-connect-connectsense/
+    Description: S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), dots (.) and forward slash (/) and it should end with a forward slash (/).
     Type: String
   DataRetentionDays:
     Description: Number of days to retain data from ConnectSense devices
@@ -60,17 +57,6 @@ Parameters:
     Default: 10
     Type: Number
     MinValue: 1
-
-Outputs:
-  ApiGatewayURL:
-    Description: Api URL. Just replace the id in this url >> https://<id>.execute-api.us-east-1.amazonaws.com/dev If you've changed the region, check it out too
-    Value: !Ref ApiGatewayApi
-
-Conditions:
-  S3HasPrefix: !Not
-    - !Equals
-      - ''
-      - !Ref 'QSS3KeyPrefix'
 
 Resources:
   ApiGatewayApi:
@@ -323,7 +309,7 @@ Resources:
             Action:
               - "sts:AssumeRole"
       ManagedPolicyArns:
-        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        - !Sub "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
       Policies:
         - PolicyName: "process-alerts-policy"
           PolicyDocument:
@@ -347,8 +333,8 @@ Resources:
             Action:
               - "sts:AssumeRole"
       ManagedPolicyArns:
-        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-        - "arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess"
+        - !Sub "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        - !Sub "arn:${AWS::Partition}:iam::aws:policy/AWSXrayWriteOnlyAccess"
       Policies:
         - PolicyName: "device-provisioning-api-role"
           PolicyDocument:
@@ -385,3 +371,8 @@ Resources:
   ## SNS TOPIC ##
   AlertsTopic:
     Type: AWS::SNS::Topic
+
+Outputs:
+  ApiGatewayURL:
+    Description: Api URL.
+    Value: !Sub https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/dev
