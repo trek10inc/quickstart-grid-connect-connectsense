@@ -1,12 +1,12 @@
 :quickstart-team-name: AWS Quick Start team
-:quickstart-project-name: quickstart-devkit
+:quickstart-project-name: quickstart-grid-connect-connectsense
 :partner-product-name: Smart Power Cord
 :partner-product-short-name: SPC
 :partner-company-name: ConnectSense
 :doc-month: 12
 :doc-year: 2020
 :partner-contributors: Carlos Lemus, Trek10; Gary Marrs and Paco Rodríguez, {partner-company-name}
-:quickstart-contributors: Toni Jones, {quickstart-team-name}
-:deployment_time: 5 minutes
+:quickstart-contributors: Dylan Owen, {quickstart-team-name}
+:deployment_time: 10 minutes
 :default_deployment_region: us-east-1
 :parameters_as_appendix:
