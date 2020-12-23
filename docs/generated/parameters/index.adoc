@@ -1,1 +1,3 @@
-// placeholder
+
+=== Launch deployment for ConnectSense IoT devices
+include::connect-sense.template.adoc[]

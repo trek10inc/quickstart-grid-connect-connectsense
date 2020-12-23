@@ -1,0 +1,20 @@
+
+.AWS IoT Analytics configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Number of days to retain data from ConnectSense devices
+(`DataRetentionDays`)|`30`|Number of days to retain data from ConnectSense devices
+|===
+.Amazon API Gateway configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Number of request allowed to make to the Api Gateway in 1 day (default 10)
+(`ApiGatewayUsagePlanLimit`)|`10`|Number of request allowed to make to the Api Gateway in 1 day
+|===
+.AWS Quick Start configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Quick Start S3 bucket name
+(`QSS3BucketName`)|`aws-quickstart`|S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).|Quick Start S3 key prefix
+(`QSS3KeyPrefix`)|`quickstart-grid-connect-connectsense/`|S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), dots (.) and forward slash (/) and it should end with a forward slash (/).
+|===
