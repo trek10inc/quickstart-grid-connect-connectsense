@@ -1,0 +1,7 @@
+// Edit this placeholder text to accurately describe your architecture.
+
+This Quick Start provides one deployment option:
+
+* *Deploy {partner-product-name} into an AWS Account*. This option builds a new AWS API Gateway and provisions AWS IoT Analytics in your account.
+
+The Quick Start provides a template for this deployment option. It also lets you configure your Amazon API Gateway configuration and AWS IoT Analytics configuration, as discussed later in this guide.

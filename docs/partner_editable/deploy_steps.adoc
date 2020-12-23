@@ -1,57 +1,25 @@
-=== Step 1. Prepare Your AWS Account
+=== Sign in to your AWS account
 
-. If you don’t already have an AWS account, create one at https://aws.amazon.com[https://aws.amazon.com] by following the on-screen instructions. 
-. Use the region selector in the navigation bar to choose the AWS Region where you want to deploy ConnectSense SPC DevKit backend on AWS.
+. Sign in to your AWS account at https://aws.amazon.com with an IAM user role that has the necessary permissions. For details, see link:#_planning_the_deployment[Planning the deployment] earlier in this guide.
+. Make sure that your AWS account is configured correctly, as discussed in the link:#_technical_requirements[Technical requirements] section.
 
-=== Step 2. Launch the Quickstart
+=== Launch the Quick Start
 
-Launch button with pointing to proper S3 bucket
+NOTE: You are responsible for the cost of the AWS services used while running this Quick Start reference deployment. There is no additional cost for using this Quick Start. For full details, see the pricing pages for each AWS service used by this Quick Start. Prices are subject to change.
 
-=== Step 3. Configure the ConnectSense device with your new endpoint
+Each deployment takes about {deployment_time} to complete.
 
-Once your stack has been deployed, open the CloudFormation console and select your deployed stack. In the “Resources” tab, find the resources with Logical IDs ApiGatewayApi and ApiKey, and open the links on their Physical IDs in two new tabs.
+. Sign in to your AWS account, and select the following option to launch the AWS CloudFormation template.
 
-.CloudFormation Stack Showing where to find the API id and API key
-image::../cloudformation-stack.png[CloudFormation Stack]
+[cols=2*]
+|===
+^|http://qs_launch_permalink[Deploy {partner-product-name} into an AWS Account^]
+^|http://qs_template_permalink[View template^]
+|===
 
-*If you go to the Outputs section* You will find the id of the API URL. In this example, the full url will be: https://falhu6lisf.execute-api.us-east-1.amazonaws.com/dev. Change it for your real case. Copy and save this URL, which will be used by your device to retrieve credentials.
+[start=2]
+. Check the AWS Region that’s displayed in the upper-right corner of the navigation bar, and change it if necessary. This Region is where the network infrastructure for {partner-product-short-name} is built. The template is launched in the {default_deployment_region} Region by default.
 
-.API Gateway - Invoke URL
-image::../apigateway-get-url.png[Api Gateway Stage URL]
-
-*In the Api Key tab* click “show” next to “API key”
-
-.API Gateway - API Key
-image::../cloudformation-apikey.png[CludFormation Api Key]
-
-Once you have found your API URL and API key, https://github.com/connectsense/quickstart-devkit-device-connection[download this repository] and follow the steps to connect your physical device with the cloud
-
-=== Step 4. Create a Quicksight Dashboard
-
-1.    	From the AWS console, navigate to the QuickSight service +
-2.    	Click on “New Analysis” +
-3.    	Click on “New DataSet” +
-4.    	Select the AWS IoT Analytics option +
-5.    	Select the AWS IoT Analytics DataSet created by your stack named “ConnectSenseQuickstartDataset” +
-6.    	Click “Create data source” +
-7.    	Click “Visualize” +
-8.    	Under the “Visual types” panel, select “Line Chart” +
-9.    	Click on the “Field wells” text at the top to expand the field wells.
-
-.Field Wells demonstration
-image::../quicksight-field-wells-activation.png[QuickSight Field Wells Activation]
-
-10.	Click and drag the field “datetime” into the X axis well +
-11.	Click on the down arrow next to the +datetime+ label and for Aggregate select “minute” +
-12. Click and drag the “watts” field into the “Value” well +
-13.	Click on the down arrow next to the “watts” label and for Aggregate select “average” +
-14.	Click and drag the “thing_name” field into the Color field +
-–     	After completing steps 10-14, your Field wells should similar to this:
-
-.Field Wells plot values
-image::../quicksight-field-wells.png[QuickSight Field Wells]
-
-15.	You will now be able to see the watts plotted across time:
-
-.Average of Watts by Datetime and ThingName Plot
-image::../quicksight-data-visualization.png[QuickSight Data Visualization]
+[start=3]
+. On the *Create stack* page, keep the default setting for the template URL, and then choose *Next*.
+. On the *Specify stack details* page, change the stack name if needed. Review the parameters for the template. Provide values for the parameters that require input. For all other parameters, review the default settings and customize them as necessary. For details on each parameter, see the link:#_parameter_reference[Parameter reference] section of this guide. When you finish reviewing and customizing the parameters, choose *Next*.
