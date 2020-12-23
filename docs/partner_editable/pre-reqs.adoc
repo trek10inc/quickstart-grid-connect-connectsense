@@ -1,13 +1,7 @@
-// If no preperation is required, remove all content from here
-
-==== Prepare your AWS account
-
-_Describe any setup required in the AWS account prior to template launch_
-
-==== Prepare your {partner-company-name} account
-
-_Describe any setup required in the partner portal/account prior to template launch_
-
 ==== Prepare for the deployment
 
-_Describe any preparation required to complete the product build, such as obtaining licenses or placing files in S3_
+To provision the SPC DevKit, you will need:
+
+* The ConnectSense SPC DevKit will need to have a load or test device plugged in like a fan or light bulb. 
+* An AWS Account. If you don’t have an AWS Account, you may create one at https://aws.amazon.com[https://aws.amazon.com].
+* A User with permissions to launch AWS CloudFormation Stacks that create IAM roles.

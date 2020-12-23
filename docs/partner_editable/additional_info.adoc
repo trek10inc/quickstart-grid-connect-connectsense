@@ -1,23 +1,58 @@
-// Add steps as necessary for accessing the software, post-configuration, and testing. Don’t include full usage instructions for your software, but add links to your product documentation for that information.
-//Should any sections not be applicable, remove them
-
-== Test the deployment
-// If steps are required to test the deployment, add them here. If not, remove the heading
-
 == Post-deployment steps
-// If post-deployment steps are required, add them here. If not, remove the heading
 
-== Best practices for using {partner-product-short-name} on AWS
-// Provide post-deployment best practices for using the technology on AWS, including considerations such as migrating data, backups, ensuring high performance, high availability, etc. Link to software documentation for detailed information.
+=== Configure the ConnectSense device with your new endpoint
 
-_Add any best practices for using the software._
+Once your stack has been deployed, open the CloudFormation console and select your deployed stack. In the “Resources” tab, find the resources with Logical IDs ApiGatewayApi and ApiKey, and open the links on their Physical IDs in two new tabs.
 
-== Security
-// Provide post-deployment best practices for using the technology on AWS, including considerations such as migrating data, backups, ensuring high performance, high availability, etc. Link to software documentation for detailed information.
+:xrefstyle: short
+.CloudFormation Stack Showing where to find the API id and API key
+image::../images/cloudformation-stack.png[CloudFormation Stack,width=100%,height=100%]
 
-_Add any security-related information._
+*If you go to the Outputs section* You will find the id of the API URL. In this example, the full url will be: https://falhu6lisf.execute-api.us-east-1.amazonaws.com/dev. Change it for your real case. Copy and save this URL, which will be used by your device to retrieve credentials.
 
-== Other useful information
-//Provide any other information of interest to users, especially focusing on areas where AWS or cloud usage differs from on-premises usage.
+:xrefstyle: short
+.API Gateway - Invoke URL
+image::../images/apigateway-get-url.png[Api Gateway Stage URL,width=100%,height=100%]
 
-_Add any other details that will help the customer use the software on AWS._
+*In the Api Key tab* click “show” next to “API key”
+
+:xrefstyle: short
+.API Gateway - API Key
+image::../images/cloudformation-apikey.png[CludFormation Api Key,width=100%,height=100%]
+
+Once you have the API URL and API key, https://github.com/connectsense/quickstart-devkit-device-connection[download this repository] and follow the steps to connect your physical device with the cloud
+
+=== Create a Quicksight Dashboard
+
+.    	From the AWS console, navigate to the QuickSight service +
+.    	Click on “New Analysis” +
+.    	Click on “New DataSet” +
+.    	Select the AWS IoT Analytics option +
+.    	Select the AWS IoT Analytics DataSet created by your stack named “ConnectSenseQuickstartDataset” +
+.    	Click “Create data source” +
+.    	Click “Visualize” +
+.    	Under the “Visual types” panel, select “Line Chart” +
+.    	Click on the “Field wells” text at the top to expand the field wells.
+
+:xrefstyle: short
+.Field Wells demonstration
+image::../images/quicksight-field-wells-activation.png[QuickSight Field Wells Activation,width=100%,height=100%]
+
+[start=10]
+.	Click and drag the field “datetime” into the X axis well +
+.	Click on the down arrow next to the +datetime+ label and for Aggregate select “minute” +
+. Click and drag the “watts” field into the “Value” well +
+.	Click on the down arrow next to the “watts” label and for Aggregate select “average” +
+.	Click and drag the “thing_name” field into the Color field +
+–     	After completing steps 10-14, your Field wells should similar to this:
+
+:xrefstyle: short
+.Field Wells plot values
+image::../images/quicksight-field-wells.png[QuickSight Field Wells,width=100%,height=100%]
+
+[start=15]
+.	You will now be able to see the watts plotted across time:
+
+:xrefstyle: short
+.Quick Start architecture for SPC DevKit on AWS
+image::../images/quicksight-data-visualization.png[QuickSight Data Visualization,width=100%,height=100%]

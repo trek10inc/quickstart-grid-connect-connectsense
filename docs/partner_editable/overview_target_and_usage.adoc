@@ -1,7 +1,1 @@
-// Replace the content in <>
-// Identify your target audience and explain how/why they would use this Quick Start.
-//Avoid borrowing text from third-party websites (copying text from AWS service documentation is fine). Also, avoid marketing-speak, focusing instead on the technical aspect.
-
-This guide provides instructions for deploying the {partner-product-short-name} Quick Start reference architecture on the AWS Cloud.
-
-This Quick Start is for users who <target audience and usage scenario>
+This Quick Start reference deployment guide provides step-by-step instructions for deploying a Serverless IoT backend on the AWS Cloud for use with the ConnectSense Smart Power Cord Development Kit. It is for users who want to get started building serverless applications to support their Smart Power Cord kit.
