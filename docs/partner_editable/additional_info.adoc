@@ -4,47 +4,55 @@
 
 Once your stack has been deployed, open the CloudFormation console and select your deployed stack. In the “Resources” tab, find the resources with Logical IDs ApiGatewayApi and ApiKey, and open the links on their Physical IDs in two new tabs.
 
+:xrefstyle: short
 .CloudFormation Stack Showing where to find the API id and API key
-image::../cloudformation-stack.png[CloudFormation Stack]
+image::../images/cloudformation-stack.png[CloudFormation Stack,width=100%,height=100%]
 
 *If you go to the Outputs section* You will find the id of the API URL. In this example, the full url will be: https://falhu6lisf.execute-api.us-east-1.amazonaws.com/dev. Change it for your real case. Copy and save this URL, which will be used by your device to retrieve credentials.
 
+:xrefstyle: short
 .API Gateway - Invoke URL
-image::../apigateway-get-url.png[Api Gateway Stage URL]
+image::../images/apigateway-get-url.png[Api Gateway Stage URL,width=100%,height=100%]
 
 *In the Api Key tab* click “show” next to “API key”
 
+:xrefstyle: short
 .API Gateway - API Key
-image::../cloudformation-apikey.png[CludFormation Api Key]
+image::../images/cloudformation-apikey.png[CludFormation Api Key,width=100%,height=100%]
 
-Once you have found your API URL and API key, https://github.com/connectsense/quickstart-devkit-device-connection[download this repository] and follow the steps to connect your physical device with the cloud
+Once you have the API URL and API key, https://github.com/connectsense/quickstart-devkit-device-connection[download this repository] and follow the steps to connect your physical device with the cloud
 
 === Create a Quicksight Dashboard
 
-1.    	From the AWS console, navigate to the QuickSight service +
-2.    	Click on “New Analysis” +
-3.    	Click on “New DataSet” +
-4.    	Select the AWS IoT Analytics option +
-5.    	Select the AWS IoT Analytics DataSet created by your stack named “ConnectSenseQuickstartDataset” +
-6.    	Click “Create data source” +
-7.    	Click “Visualize” +
-8.    	Under the “Visual types” panel, select “Line Chart” +
-9.    	Click on the “Field wells” text at the top to expand the field wells.
+.    	From the AWS console, navigate to the QuickSight service +
+.    	Click on “New Analysis” +
+.    	Click on “New DataSet” +
+.    	Select the AWS IoT Analytics option +
+.    	Select the AWS IoT Analytics DataSet created by your stack named “ConnectSenseQuickstartDataset” +
+.    	Click “Create data source” +
+.    	Click “Visualize” +
+.    	Under the “Visual types” panel, select “Line Chart” +
+.    	Click on the “Field wells” text at the top to expand the field wells.
 
+:xrefstyle: short
 .Field Wells demonstration
-image::../quicksight-field-wells-activation.png[QuickSight Field Wells Activation]
+image::../images/quicksight-field-wells-activation.png[QuickSight Field Wells Activation,width=100%,height=100%]
 
-10.	Click and drag the field “datetime” into the X axis well +
-11.	Click on the down arrow next to the +datetime+ label and for Aggregate select “minute” +
-12. Click and drag the “watts” field into the “Value” well +
-13.	Click on the down arrow next to the “watts” label and for Aggregate select “average” +
-14.	Click and drag the “thing_name” field into the Color field +
+[start=10]
+.	Click and drag the field “datetime” into the X axis well +
+.	Click on the down arrow next to the +datetime+ label and for Aggregate select “minute” +
+. Click and drag the “watts” field into the “Value” well +
+.	Click on the down arrow next to the “watts” label and for Aggregate select “average” +
+.	Click and drag the “thing_name” field into the Color field +
 –     	After completing steps 10-14, your Field wells should similar to this:
 
+:xrefstyle: short
 .Field Wells plot values
-image::../quicksight-field-wells.png[QuickSight Field Wells]
+image::../images/quicksight-field-wells.png[QuickSight Field Wells,width=100%,height=100%]
 
-15.	You will now be able to see the watts plotted across time:
+[start=15]
+.	You will now be able to see the watts plotted across time:
 
-.Average of Watts by Datetime and ThingName Plot
-image::../quicksight-data-visualization.png[QuickSight Data Visualization]
+:xrefstyle: short
+.Quick Start architecture for SPC DevKit on AWS
+image::../images/quicksight-data-visualization.png[QuickSight Data Visualization,width=100%,height=100%]
