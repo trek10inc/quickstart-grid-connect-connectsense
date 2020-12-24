@@ -2,6 +2,7 @@ project:
   name: quickstart-grid-connect-connectsense
   owner: quickstart-eng@amazon.com
   s3_regional_buckets: True
+  package_lambda: False
   regions:
     - af-south-1
     - ap-east-1
