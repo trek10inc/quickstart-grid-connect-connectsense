@@ -1,1 +1,1 @@
-image::../aws-rights.png[QuickSight Field Wells]
+There are no license requirements for deploying this Quick Start

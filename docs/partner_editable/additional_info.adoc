@@ -2,25 +2,19 @@
 
 === Configure the ConnectSense device with your new endpoint
 
-Once your stack has been deployed, open the CloudFormation console and select your deployed stack. In the “Resources” tab, find the resources with Logical IDs ApiGatewayApi and ApiKey, and open the links on their Physical IDs in two new tabs.
+Once your stack has been deployed, open the CloudFormation console and select your deployed stack. To retrieve the API Gateway URL, choose the *Outputs* tab, and copy the value of the `ApiGatewayURL` key. Next, to retrieve the ApiKey, choose the *Resources* tab, find the *Logical ID* for `ApiKey` and select the Physical ID.
 
 :xrefstyle: short
-.CloudFormation Stack Showing where to find the API id and API key
-image::../images/cloudformation-stack.png[CloudFormation Stack,width=100%,height=100%]
+.CloudFormation Stack Showing where to find the API Key resource
+image::../images/cloudformation-stack.png[CloudFormation Stack]
 
-*If you go to the Outputs section* You will find the id of the API URL. In this example, the full url will be: https://falhu6lisf.execute-api.us-east-1.amazonaws.com/dev. Change it for your real case. Copy and save this URL, which will be used by your device to retrieve credentials.
-
-:xrefstyle: short
-.API Gateway - Invoke URL
-image::../images/apigateway-get-url.png[Api Gateway Stage URL,width=100%,height=100%]
-
-*In the Api Key tab* click “show” next to “API key”
+In the newly opened tab where the Api Key resource is displayed, choose “show” next to `API key`. This will reveal the value required for registering your physical device.
 
 :xrefstyle: short
 .API Gateway - API Key
-image::../images/cloudformation-apikey.png[CludFormation Api Key,width=100%,height=100%]
+image::../images/cloudformation-apikey.png[CloudFormation Api Key]
 
-Once you have the API URL and API key, https://github.com/connectsense/quickstart-devkit-device-connection[download this repository] and follow the steps to connect your physical device with the cloud
+Once you have the API Gateway URL and API key, https://github.com/connectsense/quickstart-devkit-device-connection[download Connect Sense Device Connection repository] and follow the steps in the repository to connect your physical device with the cloud.
 
 === Create a Quicksight Dashboard
 
