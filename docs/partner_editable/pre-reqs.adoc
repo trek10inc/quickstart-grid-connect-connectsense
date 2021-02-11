@@ -3,5 +3,5 @@
 To provision the SPC DevKit, you will need:
 
 * The ConnectSense SPC DevKit will need to have a load or test device plugged in like a fan or light bulb. 
-* An AWS Account. If you don’t have an AWS Account, you may create one at https://aws.amazon.com[https://aws.amazon.com].
-* A User with permissions to launch AWS CloudFormation Stacks that create IAM roles.
+* An AWS account. If you don’t have an AWS account, you may create one at https://aws.amazon.com[https://aws.amazon.com].
+* A user with permissions to launch AWS CloudFormation stacks that create IAM roles.

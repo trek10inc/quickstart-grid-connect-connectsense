@@ -32,6 +32,8 @@ For additional information, see https://docs.aws.amazon.com/AWSCloudFormation/la
 
 * _Links for the technology that’s deployed by the Quick Start_
 
+//TODO Dylan, what links go here (above)?
+
 *Quick Start reference deployments*
 
 * https://aws.amazon.com/quickstart/[AWS Quick Start home page]

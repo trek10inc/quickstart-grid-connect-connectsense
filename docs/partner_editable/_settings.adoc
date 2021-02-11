@@ -2,7 +2,7 @@
 :partner-product-name: Smart Power Cord
 :partner-product-short-name: SPC
 :partner-company-name: ConnectSense
-:doc-month: January
+:doc-month: February
 :doc-year: 2021
 :partner-contributors: Carlos Lemus, Trek10; Gary Marrs and Paco Rodríguez, {partner-company-name}
 :quickstart-contributors: Dylan Owen, AWS Quick Start team

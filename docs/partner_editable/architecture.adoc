@@ -2,7 +2,7 @@ Deploying this Quick Start for a Serverless IoT Backend with *default parameters
 
 :xrefstyle: short
 [#architecture1]
-.Quick Start architecture for SPC DevKit on AWS
+.Quick Start architecture for SPC on AWS
 image::../images/architecture.png[Architecture,width=100%,height=100%]
 
 The Quick Start sets up the following serverless architecture:
