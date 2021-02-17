@@ -1,16 +1,17 @@
-Deploying this Quick Start for a Serverless IoT Backend with *default parameters* builds the environment illustrated in Figure 1 in the AWS Cloud.
-
 :xrefstyle: short
+
+Deploying this Quick Start for a serverless IoT back end with default parameters builds the following {partner-product-short-name} environment in the
+AWS Cloud.
+
 [#architecture1]
-.Quick Start architecture for SPC on AWS
-image::../images/architecture.png[Architecture,width=100%,height=100%]
+.Architecture for the {partner-product-name} Quick Start on AWS
+image::../images/connectsense-spc-architecture-diagram.png[Architecture]
 
-The Quick Start sets up the following serverless architecture:
+As shown in <<architecture1>>, the Quick Start sets up the following:
 
-* An AWS API Gateway deployment for ConnectSense devices to self-provision
-* An AWS Lambda Function for provisioning devices 
-* An AWS Lambda Function to generate alerts sent to a Simple Notification Service (SNS) topic
-* A Simple Notification Service (SNS) topic for publishing alerts
-* IAM Roles for the AWS Lambda Functions
-* AWS IoT Analytics Pipeline, Channel, Datastore, and Data Set for data processing
-* An Amazon Quicksight dashboard for data visualization
+* Amazon API Gateway for ConnectSense devices to self-provision.
+* AWS Lambda: one function to provision devices and one to generate alerts sent to a Simple Notification Service (SNS) topic.
+* A Simple Notification Service (SNS) topic for publishing alerts.
+* IAM roles for the AWS Lambda functions.
+* AWS IoT Analytics pipeline, channel, data store, and dataset for data processing.
+* An Amazon Quicksight dashboard for data visualization.

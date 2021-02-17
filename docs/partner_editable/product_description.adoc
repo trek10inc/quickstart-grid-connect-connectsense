@@ -1,13 +1,13 @@
-The ConnectSense® Smart Power Cord will quickly enable users to securely ingest power-related metrics from any 110 or 240 Vac device into AWS IoT Core. 
+With the ConnectSense Smart Power Cord, you can ingest power-related metrics from any 110- or 240-VAC device into AWS IoT Core. 
 
 The Smart Power Cord can be used with motors, pumps, compressors, electric cars and IT equipment. Ideal applications are monitoring/controlling pumps, commercial appliances, electric vehicle chargers, electric metering and load shedding. 
 
 The Smart Power Cord utilizes a highly secure element authentication chip which is preloaded with the necessary security credentials allowing for fast, secure provisioning to your cloud application.  The Smart Power Cord can be deployed in a matter of minutes.  
 
-For this Quick Start guide, users will work with the development kit version (the SPC DevKit) of the Smart Power Cord. The SPC DevKit uses a subset of features from the standard Smart Power Cord.  The SPC DevKit will allow you to power cycle the load on or off, read voltage, read current in amps, read the power factor and get a calculated value for the watt hours. For more information see the connectsense.com website. 
+For this Quick Start guide, users will work with the Smart Power Cord DevKit, which uses a subset of features from the standard Smart Power Cord. The SPC DevKit will allow you to power cycle the load on or off, read voltage, read current in amps, read the power factor, and get a calculated value for the watt-hours. For general information on ConnectSense smart-home devices, see the https://iot.connectsense.com/[ConnectSense website^]. For details on the Smart Power Cord DevKit, see [__?]
 
-//TODO Dylan, what URL could we point to more specifically for the SPC DevKit version?
+//TODO Dylan, Where can people find this product info? I've Googled to no avail.
 
-The Quick Start uses several AWS services to enable development teams to test their SPC DevKit against a realistic backend application, and it can be augmented with additional services and features to create a full-fledged, production-grade application.
+The Quick Start uses several AWS services that give you a way to test your SPC DevKit against a realistic backend application. You can augment the Quick Start with additional services and features to create a full-fledged, production-grade application.
 
 //TODO Dylan, I'm having trouble getting my head around what "DevKit version of the Smart Power Cord," means. Would you please provide a definition of the kit from a newbie point of view: what's in it, who uses it, when, and for what purpose?
