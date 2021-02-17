@@ -1,22 +1,21 @@
+:xrefstyle: short
 == Post-deployment steps
 
 === Configure the ConnectSense device with your new endpoint
 
-Once your stack has been deployed, open the CloudFormation console and select your deployed stack. To retrieve the API Gateway URL, choose the *Outputs* tab, and copy the value of the `ApiGatewayURL` key. Next, to retrieve the ApiKey, choose the *Resources* tab, find the *Logical ID* for `ApiKey` and select the Physical ID.
+Once your stack has been deployed, open the CloudFormation console and select your deployed stack. To retrieve the API Gateway URL, choose the *Outputs* tab, and copy the value of the `ApiGatewayURL` key. Next, to retrieve the ApiKey, choose the *Resources* tab, find the *Logical ID* for `ApiKey`, and select the physical ID.
 
-:xrefstyle: short
-.CloudFormation Stack Showing where to find the API Key resource
+.CloudFormation stack showing where to find the API key resource
 image::../images/cloudformation-stack.png[CloudFormation Stack]
 
 In the newly opened tab where the Api Key resource is displayed, choose “show” next to `API key`. This will reveal the value required for registering your physical device.
 
-:xrefstyle: short
-.API Gateway - API Key
-image::../images/cloudformation-apikey.png[CloudFormation Api Key]
+.API Gateway—API key
+image::../images/cloudformation-apikey.png[CloudFormation API key]
 
-Once you have the API Gateway URL and API key, https://github.com/connectsense/quickstart-devkit-device-connection[download Connect Sense Device Connection repository] and follow the steps in the repository to connect your physical device with the cloud.
+Once you have the API Gateway URL and API key, download the https://github.com/connectsense/quickstart-devkit-device-connection[ConnectSense Device Connection repository^], and follow the steps in the repository to connect your physical device with the cloud.
 
-=== Create a Quicksight Dashboard
+=== Create a Quicksight dashboard
 
 .    	From the AWS console, navigate to the QuickSight service +
 .    	Click on “New Analysis” +
@@ -28,25 +27,25 @@ Once you have the API Gateway URL and API key, https://github.com/connectsense/q
 .    	Under the “Visual types” panel, select “Line Chart” +
 .    	Click on the “Field wells” text at the top to expand the field wells.
 
-:xrefstyle: short
-.Field Wells demonstration
+.Field wells demonstration
 image::../images/quicksight-field-wells-activation.png[QuickSight Field Wells Activation,width=100%,height=100%]
 
 [start=10]
-.	Click and drag the field “datetime” into the X axis well +
-.	Click on the down arrow next to the +datetime+ label and for Aggregate select “minute” +
-. Click and drag the “watts” field into the “Value” well +
-.	Click on the down arrow next to the “watts” label and for Aggregate select “average” +
-.	Click and drag the “thing_name” field into the Color field +
-–     	After completing steps 10-14, your Field wells should similar to this:
+.	Click and drag the field *datetime* into the X axis well.
+.	Click on the down arrow next to the +datetime+ label and for Aggregate select *minute*.
+. Click and drag the *watts* field into the *Value* well.
+.	Click on the down arrow next to the *watts* label and for Aggregate select *average*.
+.	Click and drag the *thing_name* field into the Color field.
 
-:xrefstyle: short
-.Field Wells plot values
-image::../images/quicksight-field-wells.png[QuickSight Field Wells,width=100%,height=100%]
+After completing steps 10-14, your field wells should similar to this:
+
+//TODO Marcia to verify how to refer to these steps.
+
+.Field wells plot values
+image::../images/quicksight-field-wells.png[QuickSight Field Wells]
 
 [start=15]
 .	You will now be able to see the watts plotted across time:
 
-:xrefstyle: short
-.Quick Start architecture for SPC DevKit on AWS
-image::../images/quicksight-data-visualization.png[QuickSight Data Visualization,width=100%,height=100%]
+.QuickSight data visualization
+image::../images/quicksight-data-visualization.png[QuickSight Data Visualization]
