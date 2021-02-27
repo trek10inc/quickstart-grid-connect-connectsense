@@ -1,51 +1,89 @@
+//TODO Marcia to add "start" notes to adjust numbering throughout.
+
 :xrefstyle: short
 == Post-deployment steps
 
+After deploying your stack, follow these steps.
+
 === Configure the ConnectSense device with your new endpoint
 
-Once your stack has been deployed, open the CloudFormation console and select your deployed stack. To retrieve the API Gateway URL, choose the *Outputs* tab, and copy the value of the `ApiGatewayURL` key. Next, to retrieve the ApiKey, choose the *Resources* tab, find the *Logical ID* for `ApiKey`, and select the physical ID.
+//TODO Dylan, What context could we provide here? For example, what new endpoint are we talking about? And couldn't we have more than one device? What will we have accomplished at the end of this set of steps, and why are we doing it?
 
-.CloudFormation stack showing where to find the API key resource
-image::../images/cloudformation-stack.png[CloudFormation Stack]
+. Open the AWS CloudFormation console, and select your deployed stack. 
 
-In the newly opened tab where the Api Key resource is displayed, choose “show” next to `API key`. This will reveal the value required for registering your physical device.
+. Retrieve the API Gateway URL.
+.. Choose the *Outputs* tab.
+.. Copy the value of the *ApiGatewayURL* key.
 
-.API Gateway—API key
-image::../images/cloudformation-apikey.png[CloudFormation API key]
+//TODO Dylan, Why are we retrieving this URL? Are we supposed to paste it somewhere?
 
-Once you have the API Gateway URL and API key, download the https://github.com/connectsense/quickstart-devkit-device-connection[ConnectSense Device Connection repository^], and follow the steps in the repository to connect your physical device with the cloud.
+. Retrieve the API key's physical ID.
+.. Choose the *Resources* tab.
+.. In the *Logical ID* column, find *ApiKey*, and choose its *Physical ID* link. For example, see the link circled in <<api-key-id>>.
 
-=== Create a Quicksight dashboard
+[#api-key-id]
+.AWS CloudFormation stack showing the link to the API key's physical ID
+[link=images/cloudformation-stack.png]
+image::../images/cloudformation-stack.png[CloudFormation Stack, 80%]
 
-.    	From the AWS console, navigate to the QuickSight service +
-.    	Click on “New Analysis” +
-.    	Click on “New DataSet” +
-.    	Select the AWS IoT Analytics option +
-.    	Select the AWS IoT Analytics DataSet created by your stack named “ConnectSenseQuickstartDataset” +
-.    	Click “Create data source” +
-.    	Click “Visualize” +
-.    	Under the “Visual types” panel, select “Line Chart” +
-.    	Click on the “Field wells” text at the top to expand the field wells.
+[start=3]
+.. Next to *API key*, choose *Show*, as shown in <<api-key>>. This reveals the ID value required for registering your physical device.
 
-.Field wells demonstration
-image::../images/quicksight-field-wells-activation.png[QuickSight Field Wells Activation,width=100%,height=100%]
+//TODO Dylan, After we reveal this value, are we supposed to click it? Or copy and paste it somewhere, or otherwise do something with it?
 
-[start=10]
-.	Click and drag the field *datetime* into the X axis well.
-.	Click on the down arrow next to the +datetime+ label and for Aggregate select *minute*.
-. Click and drag the *watts* field into the *Value* well.
-.	Click on the down arrow next to the *watts* label and for Aggregate select *average*.
-.	Click and drag the *thing_name* field into the Color field.
+[#api-key]
+.API Gateway, API key
+[link=images/cloudformation-apikey.png]
+image::../images/cloudformation-apikey.png[CloudFormation API key, 60%]
 
-After completing steps 10-14, your field wells should similar to this:
+[start=4]
+. Download the https://github.com/connectsense/quickstart-devkit-device-connection[ConnectSense Device Connection repository^], and follow the steps in the repository to connect your physical device with the AWS Cloud.
 
-//TODO Marcia to verify how to refer to these steps.
+//TODO Dylan, What's the relationship between that DevKit repo and the Quick Start repo? We may need a bit of description here in this step, above, and maybe some description at the top of the section to help people understand this before they jump in on the steps.
 
-.Field wells plot values
-image::../images/quicksight-field-wells.png[QuickSight Field Wells]
+=== Create an Amazon QuickSight dashboard
 
-[start=15]
-.	You will now be able to see the watts plotted across time:
+//TODO Dylan, What context would be helpful to set here for first timers? Remind us at a high level what we'll accomplish in this section and why we're doing it. Is this procedure below just an example? What else might people want to know or do to set up a dashboard?
 
+.    	From the AWS Management Console, open the QuickSight console.
+.    	Choose *New Analysis*, *New DataSet*, *AWS IoT Analytics*.
+.    	Select the AWS IoT Analytics dataset created by your stack named `ConnectSenseQuickstartDataset`.
+.    	Choose *Create data source*, *Visualize*.
+.    	In the *Visual types* panel, choose *Line Chart*.
+.    	Choose *Field wells* at the top to expand the panel of field wells, as shown in <<field-wells>>.
+
+//TODO Dylan, What are "field wells"?
+
+//TODO Dylan, Should this screen shot below show the "(MINUTE)" and "(Median)" already? We haven't told people to choose the aggregates yet. If these don't show yet, please replace this screen shot. If they do show already, do we still need to say, below, to choose "MINUTE"?
+
+[#field-wells]
+.Field wells
+[link=images/quicksight-field-wells-activation.png]
+image::../images/quicksight-field-wells-activation.png[QuickSight Field Wells Activation]
+
+[start=7]
+. From the *Fields list*, drag the *datetime* label into the *X axis* field well. Choose the down arrow next to `datetime (MINUTE)`, and for aggregate, choose *minute*.
+. From the *Fields list*, drag the *watts* label into the *Value* field well. Choose the down arrow next to `watts (Median)`, and for aggregate, choose *average*.
+.	From the *Fields list*, drag the *thing_name* label into the *Color* field well.
+
+//TODO Dylan, Do we drag labels from the Fields list or from the field-wells labels shown along the top?
+
+//TODO Dylan, in the UI, are the labels "minutes" and "average" uppercase or lowercase?
+
+Your field wells now look something like <<field-wells-units>>.
+
+//TODO Dylan, Should the y-axis below be labeled "watts (Average)" instead of "watts (Median)" since we chose "average" in the previous step?
+
+[#field-wells-units]
+.Field wells with units
+[link=images/quicksight-field-wells.png]
+image::../images/quicksight-field-wells.png[QuickSight field wells]
+
+You now see the watts plotted something like <<quicksight-data-viz>>:
+
+[#quicksight-data-viz]
 .QuickSight data visualization
-image::../images/quicksight-data-visualization.png[QuickSight Data Visualization]
+[link=images/quicksight-data-visualization.png]
+image::../images/quicksight-data-visualization.png[QuickSight data visualization]
+
+//TODO Dylan, The current readme file (https://github.com/aws-quickstart/quickstart-grid-connect-connectsense) has a section on testing. Should we include something on testing too?
