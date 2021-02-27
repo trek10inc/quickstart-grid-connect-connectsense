@@ -1,13 +1,19 @@
-With the ConnectSense Smart Power Cord, you can ingest power-related metrics from any 110- or 240-VAC device into AWS IoT Core. 
+With the ConnectSense Smart Power Cord, your AWS Cloud environment can ingest power-related metrics from any 110- or 240-VAC ConnectSense IoT device into AWS IoT Core. The Smart Power Cord can be used with motors, pumps, compressors, electric cars, and IT equipment. Ideal applications include monitoring/controlling pumps, commercial appliances, electric vehicle chargers, electric metering and load shedding. 
 
-The Smart Power Cord can be used with motors, pumps, compressors, electric cars and IT equipment. Ideal applications are monitoring/controlling pumps, commercial appliances, electric vehicle chargers, electric metering and load shedding. 
+//TODO Dylan, What kinds of things might we do with the data that these devices provide? What kind of benefits might we realize from analyzing this data?
 
-The Smart Power Cord utilizes a highly secure element authentication chip which is preloaded with the necessary security credentials allowing for fast, secure provisioning to your cloud application.  The Smart Power Cord can be deployed in a matter of minutes.  
+The Smart Power Cord's element-authentication chip is preloaded with credentials that help you provision your application securely.
 
-For this Quick Start guide, users will work with the Smart Power Cord DevKit, which uses a subset of features from the standard Smart Power Cord. The SPC DevKit will allow you to power cycle the load on or off, read voltage, read current in amps, read the power factor, and get a calculated value for the watt-hours. For general information on ConnectSense smart-home devices, see the https://iot.connectsense.com/[ConnectSense website^]. For details on the Smart Power Cord DevKit, see [__?]
+//TODO Dylan, You mentioned that people provision the physical Smart Power Cord itself. Here, we say that they provision an application. Are both statements accurate?
 
-//TODO Dylan, Where can people find this product info? I've Googled to no avail.
+For this Quick Start, users work with the Smart Power Cord DevKit, which uses a subset of features from the standard Smart Power Cord. The SPC DevKit will allow you to power cycle the load on or off, read voltage, read current in amps, read the power factor, and get a calculated value for the watt-hours. For general information on ConnectSense smart-home devices, see the https://iot.connectsense.com/[ConnectSense website^]. For details on the Smart Power Cord DevKit, see [__?]
 
-The Quick Start uses several AWS services that give you a way to test your SPC DevKit against a realistic backend application. You can augment the Quick Start with additional services and features to create a full-fledged, production-grade application.
+//TODO Where can people find specific product info (vs. this top-level URL)? What does "DevKit version of the Smart Power Cord" means? (See email for specific questions.) 
 
-//TODO Dylan, I'm having trouble getting my head around what "DevKit version of the Smart Power Cord," means. Would you please provide a definition of the kit from a newbie point of view: what's in it, who uses it, when, and for what purpose?
+//TODO How is "DevKit" capitalized. In the DevKit repo (https://github.com/connectsense/quickstart-devkit-device-connection), it's capitalized "Devkit" in the title.
+
+//TODO Dylan, Are they keeping that DevKit repo as it? Note that the first sentence of that readme spells "physical" wrong (as "phisical").
+
+This Quick Start uses several AWS services that give you a way to test your SPC DevKit against a realistic backend application. You can augment the Quick Start with additional services and features to create a full-fledged, production-grade application.
+
+//TODO Dylan, The current readme file (https://github.com/aws-quickstart/quickstart-grid-connect-connectsense) has some content that's no longer in these .adoc files. I wonder what might still be valid there that we should pull in before we wipe out the readme? A few examples: The readme has a section called "File System." It has a section on testing. It has a section on installing dependencies. We no longer cover any of those things. Please scour it for any content of value, and incorporate it in your next pass. Thanks!

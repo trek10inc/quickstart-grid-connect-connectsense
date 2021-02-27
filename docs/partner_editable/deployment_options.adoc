@@ -1,7 +1,3 @@
-// Edit this placeholder text to accurately describe your architecture.
+This Quick Start provides one deployment option: *Deploy {partner-product-name} into an AWS account*. This option builds a new Amazon API Gateway and provisions AWS IoT Analytics in your account. The Quick Start provides a https://fwd.aws/DjrqY[template^] for this option. You can configure your API Gateway and AWS IoT Analytics configurations, as discussed later in this guide.
 
-This Quick Start provides one deployment option:
-
-* *Deploy {partner-product-name} into an AWS Account*. This option builds a new AWS API Gateway and provisions AWS IoT Analytics in your account.
-
-The Quick Start provides a template for this deployment option. It also lets you configure your Amazon API Gateway configuration and AWS IoT Analytics configuration, as discussed later in this guide.
+//TODO Dylan, instead of "as discussed later in this guide," please link to the sections. Is this one of them? ...see the link:#_configure_the_connectsense_device_with_your_new_endpoint[Configure the ConnectSense device with your new endpoint] section of this guide.
