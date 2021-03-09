@@ -1,4 +1,4 @@
-With the ConnectSense Smart Power Cord, your AWS Cloud environment can ingest power-related metrics from any 110- or 240-VAC ConnectSense IoT device into AWS IoT Core. The Smart Power Cord can be used with motors, pumps, compressors, electric cars, and IT equipment. Ideal applications include monitoring/controlling pumps, commercial appliances, electric vehicle chargers, electric metering and load shedding. 
+With the ConnectSense Smart Power Cord DevKit for AWS, your AWS Cloud environment can ingest power-related metrics from any 110- or 240-VAC ConnectSense IoT device into AWS IoT Core. The Smart Power Cord can be used with motors, pumps, compressors, electric cars, and IT equipment. Ideal applications include monitoring/controlling pumps, commercial appliances, electric vehicle chargers, electric metering and load shedding. 
 
 //TODO Dylan, What kinds of things might we do with the data that these devices provide? What kind of benefits might we realize from analyzing this data?
 

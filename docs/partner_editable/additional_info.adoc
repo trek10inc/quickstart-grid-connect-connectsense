@@ -13,9 +13,9 @@ After deploying your stack, follow these steps.
 
 . Retrieve the API Gateway URL.
 .. Choose the *Outputs* tab.
-.. Copy the value of the *ApiGatewayURL* key.
+.. Copy the value of the *ApiGatewayURL* key, and save the value for use in step 4.
 
-//TODO Dylan, Why are we retrieving this URL? Are we supposed to paste it somewhere?
+//TODO Done above | Dylan, Why are we retrieving this URL? Are we supposed to paste it somewhere?
 
 . Retrieve the API key's physical ID.
 .. Choose the *Resources* tab.
@@ -27,9 +27,9 @@ After deploying your stack, follow these steps.
 image::../images/cloudformation-stack.png[CloudFormation Stack, 80%]
 
 [start=3]
-.. Next to *API key*, choose *Show*, as shown in <<api-key>>. This reveals the ID value required for registering your physical device.
+.. Next to *API key*, choose *Show*, as shown in <<api-key>>. This reveals the ID value required for registering your physical device. Save this value for use in step 4.
 
-//TODO Dylan, After we reveal this value, are we supposed to click it? Or copy and paste it somewhere, or otherwise do something with it?
+//TODO Done above | Dylan, After we reveal this value, are we supposed to click it? Or copy and paste it somewhere, or otherwise do something with it?
 
 [#api-key]
 .API Gateway, API key
@@ -37,7 +37,8 @@ image::../images/cloudformation-stack.png[CloudFormation Stack, 80%]
 image::../images/cloudformation-apikey.png[CloudFormation API key, 60%]
 
 [start=4]
-. Download the https://github.com/connectsense/quickstart-devkit-device-connection[ConnectSense Device Connection repository^], and follow the steps in the repository to connect your physical device with the AWS Cloud.
+. To configure the SPC to connect to the AWS Cloud, download the https://github.com/connectsense/quickstart-devkit-device-connection[ConnectSense Device Connection repository^], which contains the python script to configure the SCP. You will need the *API Gateway URL* and the *API Key* retrieved in steps 2 and 3 above. Follow the steps in the ConnectSense Device Connection repository to configure your device.
+
 
 //TODO Dylan, What's the relationship between that DevKit repo and the Quick Start repo? We may need a bit of description here in this step, above, and maybe some description at the top of the section to help people understand this before they jump in on the steps.
 
