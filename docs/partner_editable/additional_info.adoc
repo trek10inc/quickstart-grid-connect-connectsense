@@ -53,7 +53,7 @@ image::../images/cloudformation-apikey.png[CloudFormation API key, 60%]
 .    	In the *Visual types* panel, choose *Line Chart*.
 .    	Choose *Field wells* at the top to expand the panel of field wells, as shown in <<field-wells>>.
 
-//TODO Dylan, What are "field wells"?
+//TODO Done - this requires some familiarity with QuickSight | Dylan, What are "field wells"?
 
 //TODO Dylan, Should this screen shot below show the "(MINUTE)" and "(Median)" already? We haven't told people to choose the aggregates yet. If these don't show yet, please replace this screen shot. If they do show already, do we still need to say, below, to choose "MINUTE"?
 
@@ -67,13 +67,13 @@ image::../images/quicksight-field-wells-activation.png[QuickSight Field Wells Ac
 . From the *Fields list*, drag the *watts* label into the *Value* field well. Choose the down arrow next to `watts (Median)`, and for aggregate, choose *average*.
 .	From the *Fields list*, drag the *thing_name* label into the *Color* field well.
 
-//TODO Dylan, Do we drag labels from the Fields list or from the field-wells labels shown along the top?
+//TODO Done - drag | Dylan, Do we drag labels from the Fields list or from the field-wells labels shown along the top?
 
 //TODO Dylan, in the UI, are the labels "minutes" and "average" uppercase or lowercase?
 
 Your field wells now look something like <<field-wells-units>>.
 
-//TODO Dylan, Should the y-axis below be labeled "watts (Average)" instead of "watts (Median)" since we chose "average" in the previous step?
+//TODO Done - no, this is correct | Dylan, Should the y-axis below be labeled "watts (Average)" instead of "watts (Median)" since we chose "average" in the previous step?
 
 [#field-wells-units]
 .Field wells with units

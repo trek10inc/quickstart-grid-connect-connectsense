@@ -1,3 +1,3 @@
 This guide provides instructions for deploying the {partner-product-name} Quick Start reference architecture on the AWS Cloud.
 
-This Quick Start creates a serverless Internet of Things (IoT) backend for developers who want to build applications for the ConnectSense Smart Power Cord (SPC).
+This Quick Start creates a serverless Internet of Things (IoT) backend for developers who want to build applications for the ConnectSense Smart Power Cord for AWS (SPC).

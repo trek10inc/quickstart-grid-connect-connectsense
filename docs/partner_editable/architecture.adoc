@@ -4,7 +4,7 @@ Deploying this Quick Start for a serverless IoT back end with default parameters
 
 [#architecture1]
 .Architecture for the {partner-product-name} Quick Start on AWS
-image::../images/connectsense-spc-architecture-diagram.png[Architecture]
+image::../images/connectsense-spc-architecture-diagram.png[Architecture,width=75%,height=75%]
 
 As shown in <<architecture1>>, the Quick Start sets up the following:
 
