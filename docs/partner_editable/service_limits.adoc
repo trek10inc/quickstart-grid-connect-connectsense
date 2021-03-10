@@ -14,4 +14,4 @@
 |Amazon SNS topic |1
 |===
 
-//TODO Dylan, Which service is the IoT topic rule associated with?
+//TODO Done - AWS IoT Core | Dylan, Which service is the IoT topic rule associated with?

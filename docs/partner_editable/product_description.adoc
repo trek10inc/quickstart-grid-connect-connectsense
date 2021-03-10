@@ -2,15 +2,15 @@ The ConnectSense Smart Power Cord for AWS was designed to allow users to easily 
 
 This Quick Start along with the SPC can be used with motors, pumps, compressors, electric cars and IT equipment, and the ideal applications are for monitoring/controlling pumps, commercial appliances, electric vehicle chargers, electric metering and load shedding.
 
-//TODO Dylan, What kinds of things might we do with the data that these devices provide? What kind of benefits might we realize from analyzing this data?
+//TODO Done - description updated | Dylan, What kinds of things might we do with the data that these devices provide? What kind of benefits might we realize from analyzing this data?
 
 The SPC utilizes a highly secure element authentication chip which is preloaded with the necessary security credentials allowing for fast, secure provisioning to your cloud application. The SPC can be deployed in a matter of minutes.
 
-//TODO Dylan, You mentioned that people provision the physical Smart Power Cord itself. Here, we say that they provision an application. Are both statements accurate?
+//TODO Done Yes, as discussed | Dylan, You mentioned that people provision the physical Smart Power Cord itself. Here, we say that they provision an application. Are both statements accurate?
 
 For this Quick Start guide, users will work with the Smart Power Cord for AWS, which uses a subset of features from the standard Smart Power Cord. The SPC will allow you to power cycle the load on or off, read voltage, read current in amps, read the power factor, and get a calculated value for the watt-hours. For general information on ConnectSense smart-home devices, see the https://iot.connectsense.com/[ConnectSense website^]. For details on the SPC, see [product link page?]
 
-//TODO Waiting on that link from them | Where can people find specific product info (vs. this top-level URL)? What does "DevKit version of the Smart Power Cord" means? (See email for specific questions.) 
+//TODO Waiting on that link from them ** this will be a last minute add, so placeholder for now | Where can people find specific product info (vs. this top-level URL)? What does "DevKit version of the Smart Power Cord" means? (See email for specific questions.) 
 
 //TODO Done - no longer applicable | How is "DevKit" capitalized. In the DevKit repo (https://github.com/connectsense/quickstart-devkit-device-connection), it's capitalized "Devkit" in the title.
 

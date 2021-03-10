@@ -13,10 +13,10 @@ For more information, see https://docs.aws.amazon.com/AWSCloudFormation/latest/U
 
 *A.* Launch the Quick Start templates from the links in this guide or from another S3 bucket. If you deploy the templates from a local copy on your computer or from a location other than an S3 bucket, you might encounter template-size limitations. For more information, see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html[AWS CloudFormation quotas^].
 
-== Additional resources
+// == Additional resources
 
-*{partner-product-short-name} Quick Start backend documentation*
+// *{partner-product-short-name} Quick Start backend documentation*
 
-* _Links for the technology that’s deployed by the Quick Start_
+// * _Links for the technology that’s deployed by the Quick Start_
 
-//TODO Dylan, what links go here (above)?
+//TODO Done - removing section as they dont have any additional info for this | Dylan, what links go here (above)?

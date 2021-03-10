@@ -3,17 +3,19 @@
 :xrefstyle: short
 == Post-deployment steps
 
-After deploying your stack, follow these steps.
+Once the stack is deployed, you will need to retrieve the API Gateway URL and API Key to be able to configure your SPC. These values will then be added to the Python script used to configure the SPC. The script will need to be retrieved from the https://github.com/connectsense/quickstart-devkit-device-connection[ConnectSense Device Connection] GitHub repository.
 
-=== Configure the ConnectSense device with your new endpoint
+=== Retrieve the API Gateway URL and API Key
 
-//TODO Dylan, What context could we provide here? For example, what new endpoint are we talking about? And couldn't we have more than one device? What will we have accomplished at the end of this set of steps, and why are we doing it?
+To configure a SPC with your new IoT endpoint, you first need to retrieve the API Gateway URL and the API Key. Once retrieved, these values will be used to connect any SPC to the IoT Endpoint. 
+To retrieve these values follow the steps below:
+//TODO Done | Dylan, What context could we provide here? For example, what new endpoint are we talking about? And couldn't we have more than one device? What will we have accomplished at the end of this set of steps, and why are we doing it?
 
 . Open the AWS CloudFormation console, and select your deployed stack. 
 
 . Retrieve the API Gateway URL.
 .. Choose the *Outputs* tab.
-.. Copy the value of the *ApiGatewayURL* key, and save the value for use in step 4.
+.. Copy the value of the *ApiGatewayURL* key, and save the value for use in configuring your SPC.
 
 //TODO Done above | Dylan, Why are we retrieving this URL? Are we supposed to paste it somewhere?
 
@@ -27,7 +29,7 @@ After deploying your stack, follow these steps.
 image::../images/cloudformation-stack.png[CloudFormation Stack, 80%]
 
 [start=3]
-.. Next to *API key*, choose *Show*, as shown in <<api-key>>. This reveals the ID value required for registering your physical device. Save this value for use in step 4.
+.. Next to *API key*, choose *Show*, as shown in <<api-key>>. This reveals the ID value required for registering your physical device. Save this value for use in configuring your SPC.
 
 //TODO Done above | Dylan, After we reveal this value, are we supposed to click it? Or copy and paste it somewhere, or otherwise do something with it?
 
@@ -36,15 +38,22 @@ image::../images/cloudformation-stack.png[CloudFormation Stack, 80%]
 [link=images/cloudformation-apikey.png]
 image::../images/cloudformation-apikey.png[CloudFormation API key, 60%]
 
-[start=4]
-. To configure the SPC to connect to the AWS Cloud, download the https://github.com/connectsense/quickstart-devkit-device-connection[ConnectSense Device Connection repository^], which contains the python script to configure the SCP. You will need the *API Gateway URL* and the *API Key* retrieved in steps 2 and 3 above. Follow the steps in the ConnectSense Device Connection repository to configure your device.
+=== Configure the SPC with your new IoT endpoint
+
+NOTE: The python script used for configuring your Smart Power Cord for AWS is maintained, and hosted by Connect Sense in their GitHub repository. 
+It is therefore required that you navigate to their repository to retrieve the script.
+
+To configure the SPC to connect to the AWS Cloud, download the https://github.com/connectsense/quickstart-devkit-device-connection[ConnectSense Device Connection repository^], which contains the python script to configure the SPC. You will need the *API Gateway URL* and the *API Key* retrieved above. Follow the steps in the ConnectSense Device Connection repository to configure your SPC.
 
 
-//TODO Dylan, What's the relationship between that DevKit repo and the Quick Start repo? We may need a bit of description here in this step, above, and maybe some description at the top of the section to help people understand this before they jump in on the steps.
+//TODO Done - added a note | Dylan, What's the relationship between that DevKit repo and the Quick Start repo? We may need a bit of description here in this step, above, and maybe some description at the top of the section to help people understand this before they jump in on the steps.
 
 === Create an Amazon QuickSight dashboard
 
-//TODO Dylan, What context would be helpful to set here for first timers? Remind us at a high level what we'll accomplish in this section and why we're doing it. Is this procedure below just an example? What else might people want to know or do to set up a dashboard?
+Amazon Quicksight can be utilized to create a dashboard to visualize the metrics from the connected SPC's. The steps below demonstrate setting up a dashboard for visualizing the watts used by the connected SPC over time.
+//TODO Done | Dylan, What context would be helpful to set here for first timers? Remind us at a high level what we'll accomplish in this section and why we're doing it. Is this procedure below just an example? What else might people want to know or do to set up a dashboard?
+
+If you are required to grant Quicksight access to AWS IoT Analytics, follow the steps in the https://docs.aws.amazon.com/iotanalytics/latest/userguide/data-visualization.html#visualization-quicksight[AWS IoT Analytics Data Visualization^] guide.
 
 .    	From the AWS Management Console, open the QuickSight console.
 .    	Choose *New Analysis*, *New DataSet*, *AWS IoT Analytics*.
@@ -55,7 +64,7 @@ image::../images/cloudformation-apikey.png[CloudFormation API key, 60%]
 
 //TODO Done - this requires some familiarity with QuickSight | Dylan, What are "field wells"?
 
-//TODO Dylan, Should this screen shot below show the "(MINUTE)" and "(Median)" already? We haven't told people to choose the aggregates yet. If these don't show yet, please replace this screen shot. If they do show already, do we still need to say, below, to choose "MINUTE"?
+//TODO Done - fixed | Dylan, Should this screen shot below show the "(MINUTE)" and "(Median)" already? We haven't told people to choose the aggregates yet. If these don't show yet, please replace this screen shot. If they do show already, do we still need to say, below, to choose "MINUTE"?
 
 [#field-wells]
 .Field wells
@@ -69,7 +78,7 @@ image::../images/quicksight-field-wells-activation.png[QuickSight Field Wells Ac
 
 //TODO Done - drag | Dylan, Do we drag labels from the Fields list or from the field-wells labels shown along the top?
 
-//TODO Dylan, in the UI, are the labels "minutes" and "average" uppercase or lowercase?
+//TODO Done - they are correct as is |  Dylan, in the UI, are the labels "minutes" and "average" uppercase or lowercase?
 
 Your field wells now look something like <<field-wells-units>>.
 
@@ -87,4 +96,4 @@ You now see the watts plotted something like <<quicksight-data-viz>>:
 [link=images/quicksight-data-visualization.png]
 image::../images/quicksight-data-visualization.png[QuickSight data visualization]
 
-//TODO Dylan, The current readme file (https://github.com/aws-quickstart/quickstart-grid-connect-connectsense) has a section on testing. Should we include something on testing too?
+//TODO Done - no, that was actuallyfor deployment and not testing. Not needed in this case | Dylan, The current readme file (https://github.com/aws-quickstart/quickstart-grid-connect-connectsense) has a section on testing. Should we include something on testing too?
