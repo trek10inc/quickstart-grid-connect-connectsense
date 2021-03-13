@@ -7,11 +7,9 @@
 |API Gateway |1
 |API Gateway API key |1
 |API Gateway endpoints |2
-|Lambda function |2
-|IoT topic rule |2
+|Lambda functions |2
+|AWS IoT Core topic rules |2
 |AWS IoT Analytics channel |1
 |AWS IoT Analytics data store |1
 |Amazon SNS topic |1
 |===
-
-//TODO Done - AWS IoT Core | Dylan, Which service is the IoT topic rule associated with?
