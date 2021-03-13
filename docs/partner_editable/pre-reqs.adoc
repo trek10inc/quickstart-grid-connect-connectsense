@@ -1,7 +1,7 @@
 ==== Prepare for the deployment
 
-To provision the {partner-product-name}, you need the following:
+To provision the {partner-product-short-name}, you need the following:
 
-* A load or test device, such as a fan or light bulb, plugged into the Smart Power Cord. 
+* A load or test device, such as a fan or light bulb, plugged into the {partner-product-short-name}. 
 * An AWS account. If you don't have an AWS account, you can create one at https://aws.amazon.com[https://aws.amazon.com^].
 * A user with permission to launch AWS CloudFormation stacks that create IAM roles.

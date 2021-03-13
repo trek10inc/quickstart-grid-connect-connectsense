@@ -1,18 +1,16 @@
 :xrefstyle: short
 
-Deploying this Quick Start for a serverless IoT back end with default parameters builds the following {partner-product-short-name} environment in the AWS Cloud.
+Deploying this Quick Start with default parameters builds the following {partner-product-short-name} serverless IoT environment in the AWS Cloud.
 
 [#architecture1]
 .Architecture for the {partner-product-name} Quick Start on AWS
-image::../images/connectsense-spc-architecture-diagram.png[Architecture,width=75%,height=75%]
+image::../images/connectsense-spc-architecture-diagram.png[Architecture, 75%]
 
 As shown in <<architecture1>>, the Quick Start sets up the following:
 
 * Amazon API Gateway for ConnectSense devices to self-provision.
-* AWS Lambda: one function to provision devices and one to generate alerts sent to an Amazon Simple Notification Service (Amazon SNS) topic. The Lambda functions require Identity and Access Management (IAM) roles created by the Quick Start.
-* An Amazon SNS topic for publishing alerts.
-* AWS IoT Core for your Smart Power Cord for AWS to publish device metrics.
-* AWS IoT Analytics pipeline, channel, data store, and dataset for processing the SPC metrics.
-* An Amazon Quicksight dashboard for data visualization.
-
-//TODO done. Dylan is revising this list when we get feedback on the revised architecture diagram.
+* An Amazon Simple Notification Service (Amazon SNS) topic for publishing alerts.
+* AWS Lambda: one function to provision devices and one to generate alerts to send to the  Amazon SNS topic. The Lambda functions require AWS Identity and Access Management (IAM) roles created by the Quick Start.
+* AWS IoT Core for your {partner-product-short-name} to publish device metrics.
+* AWS IoT Analytics pipeline, channel, data store, and dataset for processing the {partner-product-short-name} metrics.
+* An Amazon QuickSight dashboard for data visualization.
