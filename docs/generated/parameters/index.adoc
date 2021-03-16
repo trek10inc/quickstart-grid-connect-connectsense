@@ -1,3 +1,3 @@
 
-=== Launch deployment for ConnectSense IoT devices
+=== Parameters for deploying this Quick Start
 include::connect-sense.template.adoc[]

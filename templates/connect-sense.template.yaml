@@ -1,13 +1,13 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
-Description: ConnectSense deployment for ingestion of data from ConnectSense IoT devices. (qs-1rd76h0od)
+Description: Reference deployment for ingestion of data from ConnectSense IoT devices. (qs-1rd76h0od)
 Metadata:
   QuickStartDocumentation:
-    EntrypointName: "Launch deployment for ConnectSense IoT devices"
+    EntrypointName: "Parameters for deploying this Quick Start"
   About:
     Description: >
-      This template is provided by Trek10, Inc. and ConnectSense in partnership with AWS to provide
-      a quick and easy way to ingest and act on data provided by the ConnectSense IoT devices.
+      This template is provided by Grid Connect and Trek10 in collaboration with AWS. It creates a 
+      serverless IoT backend for developers who want to build applications for the ConnectSense Smart Power Cord.
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
@@ -25,9 +25,9 @@ Metadata:
           - QSS3KeyPrefix
     ParameterLabels:
       DataRetentionDays:
-        default: Number of days to retain data from ConnectSense devices
+        default: Data-retention days
       ApiGatewayUsagePlanLimit:
-        default: Number of request allowed to make to the Api Gateway in 1 day (default 10)
+        default: API Gateway usage-plan limit
       QSS3BucketName:
         default: Quick Start S3 bucket name
       QSS3KeyPrefix:
@@ -38,22 +38,33 @@ Parameters:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
     ConstraintDescription: Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
     Default: aws-quickstart
-    Description: S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
+    Description: Name of the S3 bucket for your copy of the Quick Start assets. 
+      Keep the default name unless you are customizing the template. 
+      Changing the name updates code references to point to a new Quick 
+      Start location. This name can include numbers, lowercase letters, 
+      uppercase letters, and hyphens, but do not start or end with a hyphen (-). 
+      See https://aws-quickstart.github.io/option1.html.
     Type: String
   QSS3KeyPrefix:
     AllowedPattern: ^([0-9a-zA-Z-.]+/)*$
     ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), dots (.) and forward slash (/). The prefix should end with a forward slash (/).
     Default: quickstart-grid-connect-connectsense/
-    Description: S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), dots (.) and forward slash (/) and it should end with a forward slash (/).
+    Description: S3 key prefix that is used to simulate a directory for your copy of the 
+      Quick Start assets. Keep the default prefix unless you are customizing 
+      the template. Changing this prefix updates code references to point to 
+      a new Quick Start location. This prefix can include numbers, lowercase 
+      letters, uppercase letters, hyphens (-), and forward slashes (/). End with a forward slash. 
+      See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html 
+      and https://aws-quickstart.github.io/option1.html.
     Type: String
   DataRetentionDays:
-    Description: Number of days to retain data from ConnectSense devices
+    Description: Number of days that the system retains data from ConnectSense devices.
     Default: 30
     Type: Number
     MinValue: 1
     MaxValue: 365
   ApiGatewayUsagePlanLimit:
-    Description: Number of request allowed to make to the Api Gateway in 1 day
+    Description: Number of requests to the API Gateway allowed per day.
     Default: 10
     Type: Number
     MinValue: 1
@@ -374,5 +385,8 @@ Resources:
 
 Outputs:
   ApiGatewayURL:
-    Description: Api URL.
+    Description: API URL.
     Value: !Sub https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/dev
+  Postdeployment:
+    Value: https://fwd.aws/wP8dW
+    Description: See the deployment guide for post-deployment steps.

@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.10">
-<title>Smart Power Cord on the AWS Cloud</title>
+<meta name="generator" content="Asciidoctor 2.0.12">
+<title>ConnectSense Smart Power Cord on the AWS Cloud</title>
 <style>
 
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -790,8 +790,8 @@ p.footer-text a{color:#d7d8d8}
 <div id="toctitle"></div>
 <ul class="sectlevel1">
 <li><a href="#_overview">Overview</a></li>
-<li><a href="#_smart_power_cord_on_aws">Smart Power Cord on AWS</a></li>
-<li><a href="#_cost">Cost</a></li>
+<li><a href="#_connectsense_smart_power_cord_on_aws">ConnectSense Smart Power Cord on AWS</a></li>
+<li><a href="#_aws_costs">AWS costs</a></li>
 <li><a href="#_software_licenses">Software licenses</a></li>
 <li><a href="#_architecture">Architecture</a></li>
 <li><a href="#_planning_the_deployment">Planning the deployment</a>
@@ -809,15 +809,15 @@ p.footer-text a{color:#d7d8d8}
 </li>
 <li><a href="#_post_deployment_steps">Post-deployment steps</a>
 <ul class="sectlevel2">
-<li><a href="#_configure_the_connectsense_device_with_your_new_endpoint">Configure the ConnectSense device with your new endpoint</a></li>
-<li><a href="#_create_a_quicksight_dashboard">Create a Quicksight Dashboard</a></li>
+<li><a href="#_retrieve_the_api_gateway_url_and_api_key">Retrieve the API Gateway URL and API key</a></li>
+<li><a href="#_configure_the_spc_with_your_new_iot_endpoint">Configure the SPC with your new IoT endpoint</a></li>
+<li><a href="#_create_an_amazon_quicksight_dashboard">Create an Amazon QuickSight dashboard</a></li>
 </ul>
 </li>
 <li><a href="#_faq">FAQ</a></li>
-<li><a href="#_additional_resources">Additional Resources</a></li>
 <li><a href="#_parameter_reference">Parameter reference</a>
 <ul class="sectlevel2">
-<li><a href="#_launch_deployment_for_connectsense_iot_devices">Launch deployment for ConnectSense IoT devices</a></li>
+<li><a href="#_parameters_for_deploying_this_quick_start">Parameters for deploying this Quick Start</a></li>
 </ul>
 </li>
 <li><a href="#_send_us_feedback">Send us feedback</a></li>
@@ -830,7 +830,7 @@ p.footer-text a{color:#d7d8d8}
 <div id="content">
 <div id="preamble">
 <div class="sectionbody">
-<h2 id="_smart_power_cord_on_the_aws_cloud" class="discrete text-center">Smart Power Cord on the AWS Cloud</h2>
+<h2 id="_connectsense_smart_power_cord_on_the_aws_cloud" class="discrete text-center">ConnectSense Smart Power Cord on the AWS Cloud</h2>
 <h2 id="_quick_start_reference_deployment" class="discrete text-left text-center">Quick Start Reference Deployment</h2>
 <div class="imageblock text-center">
 <div class="content">
@@ -838,9 +838,10 @@ p.footer-text a{color:#d7d8d8}
 </div>
 </div>
 <div class="paragraph text-center">
-<p><strong>12 2020</strong><br>
-<em>Carlos Lemus, Trek10; Gary Marrs and Paco Rodríguez, ConnectSense</em><br>
-<em>Dylan Owen, AWS Quick Start team</em></p>
+<p><strong>March 2021</strong><br>
+<em>Gary Marrs and Paco Rodríguez, Grid Connect</em><br>
+<em>Carlos Lemus, Trek10</em><br>
+<em>Irshad Buchh, AWS SI Partner Management team, and Dylan Owen, AWS Quick Start team</em></p>
 </div>
 <div class="admonitionblock tip text-left">
 <table>
@@ -856,7 +857,7 @@ report bugs, or submit feature ideas for this Quick Start.
 </table>
 </div>
 <div class="paragraph text-left">
-<p>This Quick Start was created by ConnectSense in collaboration with Amazon Web Services (AWS). <a href="http://aws.amazon.com/quickstart/" target="_blank" rel="noopener">Quick Starts</a> are automated reference deployments that use AWS CloudFormation templates to deploy key technologies on AWS, following AWS best practices.</p>
+<p>This Quick Start was created by Grid Connect and Trek10 in collaboration with Amazon Web Services (AWS). <a href="http://aws.amazon.com/quickstart/" target="_blank" rel="noopener">Quick Starts</a> are automated reference deployments that use AWS CloudFormation templates to deploy key technologies on AWS, following AWS best practices.</p>
 </div>
 </div>
 </div>
@@ -864,7 +865,10 @@ report bugs, or submit feature ideas for this Quick Start.
 <h2 id="_overview">Overview</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This Quick Start reference deployment guide provides step-by-step instructions for deploying a Serverless IoT backend on the AWS Cloud for use with the ConnectSense Smart Power Cord Development Kit. It is for users who want to get started building serverless applications to support their Smart Power Cord kit.</p>
+<p>This guide provides instructions for deploying the ConnectSense Smart Power Cord (SPC) Quick Start reference architecture on the AWS Cloud.</p>
+</div>
+<div class="paragraph">
+<p>This Quick Start creates a serverless Internet of Things (IoT) backend for developers who want to build applications for the SPC on AWS.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -881,31 +885,76 @@ Amazon may share user-deployment information with the AWS Partner that collabora
 </div>
 </div>
 <div class="sect1">
-<h2 id="_smart_power_cord_on_aws">Smart Power Cord on AWS</h2>
+<h2 id="_connectsense_smart_power_cord_on_aws">ConnectSense Smart Power Cord on AWS</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The ConnectSense® Smart Power Cord will quickly enable users to securely ingest power-related metrics from any 110 or 240 Vac device into AWS IoT Core.<br></p>
+<p>You can use this Quick Start with the SPC, shown in <a href="#spc">Figure 1</a>, to connect your legacy edge devices and machines—such as motors, pumps, compressors, electric cars, or IT equipment—with an IoT architecture on AWS. You can ingest power-related metrics from any 110-VAC or 240-VAC device into AWS IoT Core.</p>
+</div>
+<div id="spc" class="imageblock">
+<div class="content">
+<img src="images/smart-power-cord.png" alt="SPC-cord-itself" width="55%">
+</div>
+<div class="title">Figure 1. The ConnectSense Smart Power Cord</div>
 </div>
 <div class="paragraph">
-<p>The Smart Power Cord can be used with motors, pumps, compressors, electric cars and IT equipment. Ideal applications are monitoring/controlling pumps, commercial appliances, electric vehicle chargers, electric metering and load shedding.<br></p>
+<p>This Quick Start works with a model of the SPC that&#8217;s designed for AWS. Here are some examples of things you might do with this deployment:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Monitor power.</p>
+</li>
+<li>
+<p>Turn power on or off remotely.</p>
+</li>
+<li>
+<p>Reboot remotely.</p>
+</li>
+<li>
+<p>Sense usage.</p>
+</li>
+<li>
+<p>Provide data that leads to better maintenance schedules.</p>
+</li>
+<li>
+<p>Power cycle a load on or off.</p>
+</li>
+<li>
+<p>Read voltage.</p>
+</li>
+<li>
+<p>Read current in amps.</p>
+</li>
+<li>
+<p>Read the power factor.</p>
+</li>
+<li>
+<p>Get a calculated value for the watt-hours.</p>
+</li>
+<li>
+<p>Monitor and control pumps, commercial appliances, and electric-vehicle chargers.</p>
+</li>
+<li>
+<p>Reduce electricity consumption by switching off the power supply to groups of customers (load shedding) when the entire system is at risk.</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>The Smart Power Cord utilizes a highly secure element authentication chip which is preloaded with the necessary security credentials allowing for fast, secure provisioning to your cloud application.  The Smart Power Cord can be deployed in a matter of minutes. <br></p>
+<p>The SPC uses a Secure Element authentication chip that&#8217;s preloaded with credentials to help you provision your cloud application securely.</p>
 </div>
 <div class="paragraph">
-<p>For this Quick Start guide, users will work with the development kit version (the SPC DevKit) of the Smart Power Cord. The SPC DevKit uses a subset of features from the standard Smart Power Cord.  The SPC DevKit will allow you to power cycle the load on or off, read voltage, read current in amps, read the power factor and get a calculated value for the watt hours. For more information see the connectsense.com website.<br></p>
+<p>The Quick Start uses several AWS services that give you a way to test your SPC against a realistic backend application. You can augment the Quick Start with additional services and features to create a full-fledged, production-grade application.</p>
 </div>
 <div class="paragraph">
-<p>The Quick Start uses several AWS Services to enable development teams to test their SPC DevKit against a realistic backend application, and it can be augmented with additional services and features to create a full-fledged, production-grade application.</p>
+<p>For general information on ConnectSense smart-home devices, see the <a href="https://iot.connectsense.com/" target="_blank" rel="noopener">ConnectSense website</a>. For details on the SPC for AWS, see [product link page?]</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_cost">Cost</h2>
+<h2 id="_aws_costs">AWS costs</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You are responsible for the cost of the AWS services used while running
-this Quick Start. There is no additional cost for
+<p>You are responsible for the cost of the AWS services and any third-party licenses used while running this Quick Start. There is no additional cost for
 using the Quick Start.</p>
 </div>
 <div class="paragraph">
@@ -931,10 +980,8 @@ After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccoun
 <div class="sect1">
 <h2 id="_software_licenses">Software licenses</h2>
 <div class="sectionbody">
-<div class="imageblock">
-<div class="content">
-<img src="aws-rights.png" alt="QuickSight Field Wells">
-</div>
+<div class="paragraph">
+<p>There are no license requirements for deploying this Quick Start.</p>
 </div>
 </div>
 </div>
@@ -942,39 +989,36 @@ After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccoun
 <h2 id="_architecture">Architecture</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Deploying this Quick Start for a Serverless IoT Backend with <strong>default parameters</strong> builds the environment illustrated in Figure 1 in the AWS Cloud.</p>
+<p>Deploying this Quick Start with default parameters builds the following SPC serverless IoT environment in the AWS Cloud.</p>
 </div>
 <div id="architecture1" class="imageblock">
 <div class="content">
-<img src="images/architecture.png" alt="Architecture" width="100%" height="100%">
+<img src="images/connectsense-spc-architecture-diagram.png" alt="Architecture" width="75%">
 </div>
-<div class="title">Figure 1. Quick Start architecture for SPC DevKit on AWS</div>
+<div class="title">Figure 2. Architecture for the ConnectSense Smart Power Cord Quick Start on AWS</div>
 </div>
 <div class="paragraph">
-<p>The Quick Start sets up the following serverless architecture:</p>
+<p>As shown in <a href="#architecture1">Figure 2</a>, the Quick Start sets up the following:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>An AWS API Gateway deployment for ConnectSense devices to self-provision</p>
+<p>Amazon API Gateway for ConnectSense devices to self-provision.</p>
 </li>
 <li>
-<p>An AWS Lambda Function for provisioning devices</p>
+<p>An Amazon Simple Notification Service (Amazon SNS) topic for publishing alerts.</p>
 </li>
 <li>
-<p>An AWS Lambda Function to generate alerts sent to a Simple Notification Service (SNS) topic</p>
+<p>AWS Lambda: one function to provision devices and one to generate alerts to send to the  Amazon SNS topic. The Lambda functions require AWS Identity and Access Management (IAM) roles created by the Quick Start.</p>
 </li>
 <li>
-<p>A Simple Notification Service (SNS) topic for publishing alerts</p>
+<p>AWS IoT Core for your SPC to publish device metrics.</p>
 </li>
 <li>
-<p>IAM Roles for the AWS Lambda Functions</p>
+<p>AWS IoT Analytics pipeline, channel, data store, and dataset for processing the SPC metrics.</p>
 </li>
 <li>
-<p>AWS IoT Analytics Pipeline, Channel, Datastore, and Data Set for data processing</p>
-</li>
-<li>
-<p>An Amazon Quicksight dashboard for data visualization</p>
+<p>An Amazon QuickSight dashboard for data visualization.</p>
 </li>
 </ul>
 </div>
@@ -986,24 +1030,27 @@ After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccoun
 <div class="sect2">
 <h3 id="_specialized_knowledge">Specialized knowledge</h3>
 <div class="paragraph">
-<p>This deployment requires a moderate level of familiarity with AWS services. If you’re new to AWS, visit <a href="https://aws.amazon.com/getting-started/" target="_blank" rel="noopener">Getting Started with AWS</a> and <a href="https://aws.amazon.com/training/" target="_blank" rel="noopener">Training and Certification</a>. These sites provide materials for learning how to design, deploy, and operate your infrastructure and applications on the AWS Cloud.</p>
+<p>This deployment requires a moderate level of familiarity with
+AWS services. If you’re new to AWS, see <a href="https://aws.amazon.com/getting-started/" target="_blank" rel="noopener">Getting Started Resource Center</a>
+and <a href="https://aws.amazon.com/training/" target="_blank" rel="noopener">AWS Training and Certification</a>. These sites provide materials for learning how to design,
+deploy, and operate your infrastructure and applications on the AWS Cloud.</p>
 </div>
 <div class="paragraph">
-<p>Before you deploy this Quick Start, we recommend that you become familiar with the following AWS services. (If you are new to AWS, see <a href="https://aws.amazon.com/getting-started/">Getting Started with AWS</a>)</p>
+<p>This Quick Start also assumes familiarity with the following AWS services:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://aws.amazon.com/api-gateway/">Amazon API Gateway</a></p>
+<p><a href="https://aws.amazon.com/api-gateway/" target="_blank" rel="noopener">Amazon API Gateway</a></p>
 </li>
 <li>
-<p><a href="https://aws.amazon.com/iot-core/">AWS IoT Core</a></p>
+<p><a href="https://aws.amazon.com/iot-core/" target="_blank" rel="noopener">AWS IoT Core</a></p>
 </li>
 <li>
-<p><a href="https://aws.amazon.com/lambda/">AWS Lambda</a></p>
+<p><a href="https://aws.amazon.com/lambda/" target="_blank" rel="noopener">AWS Lambda</a></p>
 </li>
 <li>
-<p><a href="https://aws.amazon.com/documentation/cloudformation/">AWS CloudFormation</a></p>
+<p><a href="https://aws.amazon.com/documentation/cloudformation/" target="_blank" rel="noopener">AWS CloudFormation</a></p>
 </li>
 </ul>
 </div>
@@ -1020,7 +1067,7 @@ After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccoun
 <div class="sect2">
 <h3 id="_technical_requirements">Technical requirements</h3>
 <div class="paragraph">
-<p>Before you launch the Quick Start, your account must be configured as specified in the following table. Otherwise, deployment might fail.</p>
+<p>Before you launch the Quick Start, review the following information and ensure that your account is properly configured. Otherwise, deployment might fail.</p>
 </div>
 <div class="sect3">
 <h4 id="_resource_quotas">Resource quotas</h4>
@@ -1040,7 +1087,7 @@ After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccoun
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Identity and Access Management (IAM) roles</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IAM roles</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
 </tr>
 <tr>
@@ -1048,31 +1095,31 @@ After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccoun
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">API Gateway API Key</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API Gateway API key</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">API Gateway Endpoints</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API Gateway endpoints</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Lambda Function</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lambda functions</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">IoT Topic Rule</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AWS IoT Core topic rules</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">IoT Analytics Channel</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AWS IoT Analytics channel</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">IoT Analytics Datastore</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AWS IoT Analytics data store</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">SNS Topic</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Amazon SNS topic</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
 </tr>
 </tbody>
@@ -1080,22 +1127,16 @@ After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccoun
 </div>
 <div class="sect3">
 <h4 id="_supported_regions">Supported Regions</h4>
+<div class="paragraph">
+<p>This Quick Start supports the following Regions:</p>
+</div>
 <div class="ulist">
 <ul>
 <li>
-<p>us-east-1 (N. Virginia)</p>
+<p>ap-northeast-1 (Tokyo)</p>
 </li>
 <li>
-<p>us-east-2 (Ohio)</p>
-</li>
-<li>
-<p>us-west-1 (N. California)</p>
-</li>
-<li>
-<p>us-west-2 (Oregon)</p>
-</li>
-<li>
-<p>ca-central-1 (Canada Central)</p>
+<p>ap-southeast-2 (Sydney)</p>
 </li>
 <li>
 <p>eu-central-1 (Frankfurt)</p>
@@ -1104,43 +1145,13 @@ After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccoun
 <p>eu-west-1 (Ireland)</p>
 </li>
 <li>
-<p>eu-west-2 (London)</p>
+<p>us-east-1 (N. Virginia)</p>
 </li>
 <li>
-<p>eu-west-3 (Paris)</p>
+<p>us-east-2 (Ohio)</p>
 </li>
 <li>
-<p>ap-southeast-1 (Singapore)</p>
-</li>
-<li>
-<p>ap-southeast-2 (Sydney)</p>
-</li>
-<li>
-<p>ap-south-1 (Mumbai)</p>
-</li>
-<li>
-<p>ap-northeast-1 (Tokyo)</p>
-</li>
-<li>
-<p>ap-northeast-2 (Seoul)</p>
-</li>
-<li>
-<p>sa-east-1 (South America)</p>
-</li>
-<li>
-<p>eu-north-1 (Stockholm)</p>
-</li>
-<li>
-<p>ap-east-1 (Hong Kong)</p>
-</li>
-<li>
-<p>me-south-1 (Bahrain)</p>
-</li>
-<li>
-<p>af-south-1 (Cape Town)</p>
-</li>
-<li>
-<p>eu-south-1 (Milan)</p>
+<p>us-west-2 (Oregon)</p>
 </li>
 </ul>
 </div>
@@ -1151,7 +1162,7 @@ After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccoun
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-Certain Regions are available on an opt-in basis. See <a href="https://docs.aws.amazon.com/general/latest/gr/rande-manage.html" target="_blank" rel="noopener">Managing AWS Regions</a>.
+Certain Regions are available on an opt-in basis. For more information, see <a href="https://docs.aws.amazon.com/general/latest/gr/rande-manage.html" target="_blank" rel="noopener">Managing AWS Regions</a>.
 </td>
 </tr>
 </table>
@@ -1166,18 +1177,18 @@ Certain Regions are available on an opt-in basis. See <a href="https://docs.aws.
 <div class="sect3">
 <h4 id="_prepare_for_the_deployment">Prepare for the deployment</h4>
 <div class="paragraph">
-<p>To provision the SPC DevKit, you will need:</p>
+<p>To provision the SPC, you need the following:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>The ConnectSense SPC DevKit will need to have a load or test device plugged in like a fan or light bulb.</p>
+<p>A load or test device, such as a fan or light bulb, plugged into the SPC.</p>
 </li>
 <li>
-<p>An AWS Account. If you don’t have an AWS Account, you may create one at <a href="https://aws.amazon.com">https://aws.amazon.com</a>.</p>
+<p>An AWS account. If you don&#8217;t have an AWS account, you can create one at <a href="https://aws.amazon.com" target="_blank" rel="noopener">https://aws.amazon.com</a>.</p>
 </li>
 <li>
-<p>A User with permissions to launch AWS CloudFormation Stacks that create IAM roles.</p>
+<p>A user with permission to launch AWS CloudFormation stacks that create IAM roles.</p>
 </li>
 </ul>
 </div>
@@ -1185,17 +1196,7 @@ Certain Regions are available on an opt-in basis. See <a href="https://docs.aws.
 <div class="sect3">
 <h4 id="_deployment_options">Deployment options</h4>
 <div class="paragraph">
-<p>This Quick Start provides one deployment option:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>Deploy Smart Power Cord into an AWS Account</strong>. This option builds a new AWS API Gateway and provisions AWS IoT Analytics in your account.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The Quick Start provides a template for this deployment option. It also lets you configure your Amazon API Gateway configuration and AWS IoT Analytics configuration, as discussed later in this guide.</p>
+<p>This Quick Start provides one deployment option, which builds a new Amazon API Gateway and provisions AWS IoT Analytics in your account.</p>
 </div>
 </div>
 </div>
@@ -1219,49 +1220,17 @@ Certain Regions are available on an opt-in basis. See <a href="https://docs.aws.
 </div>
 <div class="sect2">
 <h3 id="_launch_the_quick_start">Launch the Quick Start</h3>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-You are responsible for the cost of the AWS services used while running this Quick Start reference deployment. There is no additional cost for using this Quick Start. For full details, see the pricing pages for each AWS service used by this Quick Start. Prices are subject to change.
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
 <p>Each deployment takes about 10 minutes to complete.</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Sign in to your AWS account, and select the following option to launch the AWS CloudFormation template.</p>
+<p>Sign in to your AWS account, and <a href="https://fwd.aws/9b3pd" target="_blank" rel="noopener">deploy the ConnectSense Smart Power Cord Quick Start</a>. (Here&#8217;s where you can <a href="https://fwd.aws/DjrqY" target="_blank" rel="noopener">view the template</a>).</p>
 </li>
-</ol>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="http://qs_launch_permalink" target="_blank" rel="noopener">Deploy Smart Power Cord into an AWS Account</a></p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="http://qs_template_permalink" target="_blank" rel="noopener">View template</a></p></td>
-</tr>
-</tbody>
-</table>
-<div class="olist arabic">
-<ol class="arabic" start="2">
 <li>
-<p>Check the AWS Region that’s displayed in the upper-right corner of the navigation bar, and change it if necessary. This Region is where the network infrastructure for SPC is built. The template is launched in the us-east-1 Region by default.</p>
+<p>Check the AWS Region that&#8217;s displayed in the upper-right corner of the navigation bar, and change it if necessary. This Region is where the network infrastructure for SPC is built. The template is launched in the us-east-1 Region by default. For other choices, see <a href="#_supported_regions">Supported Regions</a> earlier in this guide.</p>
 </li>
-</ol>
-</div>
-<div class="olist arabic">
-<ol class="arabic" start="3">
 <li>
 <p>On the <strong>Create stack</strong> page, keep the default setting for the template URL, and then choose <strong>Next</strong>.</p>
 </li>
@@ -1285,7 +1254,7 @@ You are responsible for the cost of the AWS services used while running this Qui
 <p>Monitor the status of the stack. When the status is <strong>CREATE_COMPLETE</strong>, the SPC deployment is ready.</p>
 </li>
 <li>
-<p>Use the values displayed in the <strong>Outputs</strong> tab for the stack, as shown in <a href="#cfn_outputs">Figure 2</a>, to view the created resources.</p>
+<p>Use the values displayed in the <strong>Outputs</strong> tab for the stack, as shown in <a href="#cfn_outputs">Figure 3</a>, to view the created resources.</p>
 </li>
 </ol>
 </div>
@@ -1293,7 +1262,7 @@ You are responsible for the cost of the AWS services used while running this Qui
 <div class="content">
 <a class="image" href="images/cfn_outputs.png"><img src="images/cfn_outputs.png" alt="cfn_outputs" width="100%" height="100%"></a>
 </div>
-<div class="title">Figure 2. SPC outputs after successful deployment</div>
+<div class="title">Figure 3. SPC outputs after successful deployment</div>
 </div>
 </div>
 </div>
@@ -1301,116 +1270,155 @@ You are responsible for the cost of the AWS services used while running this Qui
 <div class="sect1">
 <h2 id="_post_deployment_steps">Post-deployment steps</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="_configure_the_connectsense_device_with_your_new_endpoint">Configure the ConnectSense device with your new endpoint</h3>
 <div class="paragraph">
-<p>Once your stack has been deployed, open the CloudFormation console and select your deployed stack. In the “Resources” tab, find the resources with Logical IDs ApiGatewayApi and ApiKey, and open the links on their Physical IDs in two new tabs.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="images/cloudformation-stack.png" alt="CloudFormation Stack" width="100%" height="100%">
-</div>
-<div class="title">Figure 3. CloudFormation Stack Showing where to find the API id and API key</div>
-</div>
-<div class="paragraph">
-<p><strong>If you go to the Outputs section</strong> You will find the id of the API URL. In this example, the full url will be: <a href="https://falhu6lisf.execute-api.us-east-1.amazonaws.com/dev" class="bare">https://falhu6lisf.execute-api.us-east-1.amazonaws.com/dev</a>. Change it for your real case. Copy and save this URL, which will be used by your device to retrieve credentials.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="images/apigateway-get-url.png" alt="Api Gateway Stage URL" width="100%" height="100%">
-</div>
-<div class="title">Figure 4. API Gateway - Invoke URL</div>
-</div>
-<div class="paragraph">
-<p><strong>In the Api Key tab</strong> click “show” next to “API key”</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="images/cloudformation-apikey.png" alt="CludFormation Api Key" width="100%" height="100%">
-</div>
-<div class="title">Figure 5. API Gateway - API Key</div>
-</div>
-<div class="paragraph">
-<p>Once you have the API URL and API key, <a href="https://github.com/connectsense/quickstart-devkit-device-connection">download this repository</a> and follow the steps to connect your physical device with the cloud</p>
-</div>
+<p>After you&#8217;ve deployed the stack, you must retrieve the API Gateway URL and API key so that you can configure your SPC. After you retrieve these values, you use them to connect any SPC to the IoT endpoint, as described in the following sections.</p>
 </div>
 <div class="sect2">
-<h3 id="_create_a_quicksight_dashboard">Create a Quicksight Dashboard</h3>
+<h3 id="_retrieve_the_api_gateway_url_and_api_key">Retrieve the API Gateway URL and API key</h3>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>From the AWS console, navigate to the QuickSight service<br></p>
+<p>Open the AWS CloudFormation console, and choose your deployed stack.</p>
 </li>
 <li>
-<p>Click on “New Analysis”<br></p>
+<p>Retrieve the API Gateway URL.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Choose the <strong>Outputs</strong> tab.</p>
 </li>
 <li>
-<p>Click on “New DataSet”<br></p>
-</li>
-<li>
-<p>Select the AWS IoT Analytics option<br></p>
-</li>
-<li>
-<p>Select the AWS IoT Analytics DataSet created by your stack named “ConnectSenseQuickstartDataset”<br></p>
-</li>
-<li>
-<p>Click “Create data source”<br></p>
-</li>
-<li>
-<p>Click “Visualize”<br></p>
-</li>
-<li>
-<p>Under the “Visual types” panel, select “Line Chart”<br></p>
-</li>
-<li>
-<p>Click on the “Field wells” text at the top to expand the field wells.</p>
+<p>Copy the value of the <strong>ApiGatewayURL</strong> key, and save the value for use in configuring your SPC.</p>
 </li>
 </ol>
 </div>
-<div class="imageblock">
+</li>
+<li>
+<p>Retrieve the API key&#8217;s physical ID.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Choose the <strong>Resources</strong> tab.</p>
+</li>
+<li>
+<p>In the <strong>Logical ID</strong> column, find <strong>ApiKey</strong>, and choose its <strong>Physical ID</strong> link. For example, see the circled link in <a href="#api-key-id">Figure 4</a>.</p>
+<div id="api-key-id" class="imageblock">
 <div class="content">
-<img src="images/quicksight-field-wells-activation.png" alt="QuickSight Field Wells Activation" width="100%" height="100%">
+<a class="image" href="images/cloudformation-stack.png"><img src="images/cloudformation-stack.png" alt="CloudFormation Stack" width="80%"></a>
 </div>
-<div class="title">Figure 6. Field Wells demonstration</div>
+<div class="title">Figure 4. AWS CloudFormation stack showing the link to the API key&#8217;s physical ID</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a" start="3">
+<li>
+<p>Next to <strong>API key</strong>, choose <strong>Show</strong>, as shown in <a href="#api-key">Figure 5</a>. This reveals the ID value required for registering your physical device. Save this value for use in configuring your SPC.</p>
+<div id="api-key" class="imageblock">
+<div class="content">
+<a class="image" href="images/cloudformation-apikey.png"><img src="images/cloudformation-apikey.png" alt="CloudFormation API key" width="60%"></a>
+</div>
+<div class="title">Figure 5. API Gateway, API key</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_configure_the_spc_with_your_new_iot_endpoint">Configure the SPC with your new IoT endpoint</h3>
+<div class="paragraph">
+<p>To configure your SPC, you need the Python script that&#8217;s maintained and hosted by ConnectSense in their GitHub repository.</p>
 </div>
 <div class="olist arabic">
-<ol class="arabic" start="10">
+<ol class="arabic">
 <li>
-<p>Click and drag the field “datetime” into the X axis well<br></p>
+<p>Download the <a href="https://github.com/connectsense/quickstart-devkit-device-connection" target="_blank" rel="noopener">ConnectSense Device Connection repository</a>, and retrieve the script.</p>
 </li>
 <li>
-<p>Click on the down arrow next to the datetime label and for Aggregate select “minute”<br></p>
-</li>
-<li>
-<p>Click and drag the “watts” field into the “Value” well<br></p>
-</li>
-<li>
-<p>Click on the down arrow next to the “watts” label and for Aggregate select “average”<br></p>
-</li>
-<li>
-<p>Click and drag the “thing_name” field into the Color field<br>
-–     	After completing steps 10-14, your Field wells should similar to this:</p>
+<p>Follow the configuration steps in the repository. You need the API Gateway URL and the API key that you retrieved earlier. (See <a href="#_retrieve_the_api_gateway_url_and_api_key">Retrieve the API Gateway URL and API key</a>.)</p>
 </li>
 </ol>
 </div>
-<div class="imageblock">
-<div class="content">
-<img src="images/quicksight-field-wells.png" alt="QuickSight Field Wells" width="100%" height="100%">
 </div>
-<div class="title">Figure 7. Field Wells plot values</div>
+<div class="sect2">
+<h3 id="_create_an_amazon_quicksight_dashboard">Create an Amazon QuickSight dashboard</h3>
+<div class="paragraph">
+<p>You can use Amazon QuickSight to create a dashboard to visualize the metrics from the connected SPC. Follow these steps to set up a dashboard for visualizing the watts used by the connected SPC over time.</p>
 </div>
 <div class="olist arabic">
-<ol class="arabic" start="15">
+<ol class="arabic">
 <li>
-<p>You will now be able to see the watts plotted across time:</p>
+<p>From the AWS Management Console, open the QuickSight console.</p>
+</li>
+<li>
+<p>Choose <strong>New Analysis</strong>, <strong>New Dataset</strong>, <strong>AWS IoT Analytics</strong>.</p>
+</li>
+<li>
+<p>Choose the AWS IoT Analytics dataset that was created by your stack named <code>ConnectSenseQuickstartDataset</code>.</p>
+</li>
+<li>
+<p>Choose <strong>Create data source</strong>, <strong>Visualize</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Visual types</strong> panel, choose <strong>Line Chart</strong>.</p>
+</li>
+<li>
+<p>Choose <strong>Field wells</strong> at the top to expand the panel of field wells, as shown in <a href="#field-wells">Figure 6</a>.</p>
+<div id="field-wells" class="imageblock">
+<div class="content">
+<a class="image" href="images/quicksight-field-wells-activation.png"><img src="images/quicksight-field-wells-activation.png" alt="QuickSight Field Wells Activation" width="80%"></a>
+</div>
+<div class="title">Figure 6. Field wells</div>
+</div>
 </li>
 </ol>
 </div>
-<div class="imageblock">
-<div class="content">
-<img src="images/quicksight-data-visualization.png" alt="QuickSight Data Visualization" width="100%" height="100%">
+<div class="olist arabic">
+<ol class="arabic" start="7">
+<li>
+<p>From the <strong>Fields list</strong>, drag the <strong>datetime</strong> label into the <strong>X axis</strong> field well. Choose the down arrow next to <code>datetime (MINUTE)</code>, and for aggregate, choose <strong>minute</strong>.</p>
+</li>
+<li>
+<p>From the <strong>Fields list</strong>, drag the <strong>watts</strong> label into the <strong>Value</strong> field well. Choose the down arrow next to <code>watts (Median)</code>, and for aggregate, choose <strong>average</strong>.</p>
+</li>
+<li>
+<p>From the <strong>Fields list</strong>, drag the <strong>thing_name</strong> label into the <strong>Color</strong> field well.</p>
+<div class="paragraph">
+<p>Your field wells now look something like <a href="#field-wells-units">Figure 7</a>.</p>
 </div>
-<div class="title">Figure 8. Quick Start architecture for SPC DevKit on AWS</div>
+<div id="field-wells-units" class="imageblock">
+<div class="content">
+<a class="image" href="images/quicksight-field-wells.png"><img src="images/quicksight-field-wells.png" alt="QuickSight field wells" width="80%"></a>
+</div>
+<div class="title">Figure 7. Field wells with units</div>
+</div>
+<div class="paragraph">
+<p>You now see the watts plotted something like <a href="#quicksight-data-viz">Figure 8</a>:</p>
+</div>
+<div id="quicksight-data-viz" class="imageblock">
+<div class="content">
+<a class="image" href="images/quicksight-data-visualization.png"><img src="images/quicksight-data-visualization.png" alt="QuickSight data visualization"></a>
+</div>
+<div class="title">Figure 8. QuickSight data visualization</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+If you need to grant QuickSight access to AWS IoT Analytics, follow the steps documented here: <a href="https://docs.aws.amazon.com/iotanalytics/latest/userguide/data-visualization.html#visualization-quicksight" target="_blank" rel="noopener">Visualizing AWS IoT Analytics data with Amazon QuickSight</a>.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -1419,87 +1427,31 @@ You are responsible for the cost of the AWS services used while running this Qui
 <h2 id="_faq">FAQ</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Any tips or answers to anticipated questions. This could include the following troubleshooting information. If you don’t have any other Q&amp;A to add, change this heading to “Troubleshooting” and remove the Q/A headings below.</em></p>
+<p><strong>Q.</strong> I encountered a <strong>CREATE_FAILED</strong> error when I launched the Quick Start.</p>
 </div>
 <div class="paragraph">
-<p><strong class="red">Q.</strong> I encountered a CREATE_FAILED error when I launched the Quick Start.<br>
-<strong class="red">A.</strong> If AWS CloudFormation fails to create the stack, we recommend that you relaunch the template with <strong>Rollback on failure</strong> set to <strong>No</strong>. (This setting is under <strong>Advanced</strong> in the AWS CloudFormation console, <strong>Options</strong> page). With this setting, the stack’s state will be retained and the instance will be left running so you can troubleshoot the issue. (For Windows, look at the log files in  <code>%ProgramFiles%\Amazon\EC2ConfigService+ and +C:\cfn\log+</code>).</p>
+<p><strong>A.</strong> If AWS CloudFormation fails to create the stack, relaunch the template with <strong>Rollback on failure</strong> set to <strong>Disabled</strong>. This setting is under <strong>Advanced</strong> in the AWS CloudFormation console on the <strong>Configure stack options</strong> page. With this setting, the stack&#8217;s state is retained, and the instance keeps running so that you can troubleshoot the issue. (For Windows, look at the log files in <code>%ProgramFiles%\Amazon\EC2ConfigService</code> and <code>C:\cfn\log</code>.)</p>
 </div>
-<div class="admonitionblock important">
+<div class="admonitionblock warning">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-important" title="Important"></i>
+<i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-When you set <strong>Rollback on failure</strong> to <strong>No</strong>, you will continue to incur AWS charges for this stack. Please make sure to delete the stack when you finish troubleshooting.
+When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, you continue to incur AWS charges for this stack. Delete the stack when you finish troubleshooting.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>For additional information, see <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/troubleshooting.html">Troubleshooting AWS CloudFormation</a> on the AWS website.</p>
+<p>For more information, see <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/troubleshooting.html" target="_blank" rel="noopener">Troubleshooting AWS CloudFormation</a>.</p>
 </div>
 <div class="paragraph">
-<p><strong class="red">Q.</strong> I encountered a size limitation error when I deployed the AWS CloudFormation templates.<br>
-<strong class="red">A.</strong> We recommend that you launch the Quick Start templates from the links in this guide or from another S3 bucket. If you deploy the templates from a local copy on your computer or from a non-S3 location, you might encounter template size limitations when you create the stack. For more information about AWS CloudFormation limits, see the <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html">AWS documentation</a>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_additional_resources">Additional Resources</h2>
-<div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p><a href="https://aws.amazon.com/getting-started/" target="_blank" rel="noopener">Getting Started Resource Center</a></p>
-</li>
-<li>
-<p><a href="https://docs.aws.amazon.com/general/latest/gr/" target="_blank" rel="noopener">AWS General Reference</a></p>
-</li>
-<li>
-<p><a href="https://docs.aws.amazon.com/general/latest/gr/glos-chap.html" target="_blank" rel="noopener">AWS Glossary</a></p>
-</li>
-</ul>
+<p><strong>Q.</strong> I encountered a size-limitation error when I deployed the AWS CloudFormation templates.</p>
 </div>
 <div class="paragraph">
-<p><strong>AWS services</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AmazonEBS.html">Amazon EBS</a></p>
-</li>
-<li>
-<p><a href="https://aws.amazon.com/documentation/ec2/">Amazon EC2</a></p>
-</li>
-<li>
-<p><a href="https://aws.amazon.com/documentation/vpc/">Amazon VPC</a></p>
-</li>
-<li>
-<p><a href="https://aws.amazon.com/documentation/cloudformation/">AWS CloudFormation</a></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>ConnectSense SPC DevKit backend documentation</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><em>Links for the technology that’s deployed by the Quick Start</em></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>Quick Start reference deployments</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="https://aws.amazon.com/quickstart/">AWS Quick Start home page</a></p>
-</li>
-</ul>
+<p><strong>A.</strong> Launch the Quick Start templates from the links in this guide or from another S3 bucket. If you deploy the templates from a local copy on your computer or from a location other than an S3 bucket, you might encounter template-size limitations. For more information, see <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html" target="_blank" rel="noopener">AWS CloudFormation quotas</a>.</p>
 </div>
 </div>
 </div>
@@ -1520,7 +1472,7 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 </table>
 </div>
 <div class="sect2">
-<h3 id="_launch_deployment_for_connectsense_iot_devices">Launch deployment for ConnectSense IoT devices</h3>
+<h3 id="_parameters_for_deploying_this_quick_start">Parameters for deploying this Quick Start</h3>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. AWS IoT Analytics configuration</caption>
 <colgroup>
@@ -1537,10 +1489,10 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Number of days to retain data from ConnectSense devices
+<td class="tableblock halign-left valign-top"><p class="tableblock">Data-retention days
 (<code>DataRetentionDays</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>30</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Number of days to retain data from ConnectSense devices</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number of days that the system retains data from ConnectSense devices.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1560,10 +1512,10 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Number of request allowed to make to the Api Gateway in 1 day (default 10)
+<td class="tableblock halign-left valign-top"><p class="tableblock">API Gateway usage-plan limit
 (<code>ApiGatewayUsagePlanLimit</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>10</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Number of request allowed to make to the Api Gateway in 1 day</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number of requests to the API Gateway allowed per day.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1586,13 +1538,13 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quick Start S3 bucket name
 (<code>QSS3BucketName</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>aws-quickstart</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name of the S3 bucket for your copy of the Quick Start assets. Keep the default name unless you are customizing the template. Changing the name updates code references to point to a new Quick Start location. This name can include numbers, lowercase letters, uppercase letters, and hyphens, but do not start or end with a hyphen (-). See <a href="https://aws-quickstart.github.io/option1.html" class="bare">https://aws-quickstart.github.io/option1.html</a>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quick Start S3 key prefix
 (<code>QSS3KeyPrefix</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>quickstart-grid-connect-connectsense/</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), dots (.) and forward slash (/) and it should end with a forward slash (/).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">S3 key prefix that is used to simulate a directory for your copy of the Quick Start assets. Keep the default prefix unless you are customizing the template. Changing this prefix updates code references to point to a new Quick Start location. This prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slashes (/). End with a forward slash. See <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html" class="bare">https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html</a> and <a href="https://aws-quickstart.github.io/option1.html" class="bare">https://aws-quickstart.github.io/option1.html</a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1633,22 +1585,22 @@ and to share your customizations with others.</p>
 <p>This document is provided for informational purposes only. It represents AWS’s current product offerings and practices as of the date of issue of this document, which are subject to change without notice. Customers are responsible for making their own independent assessment of the information in this document and any use of AWS’s products or services, each of which is provided “as is” without warranty of any kind, whether expressed or implied. This document does not create any warranties, representations, contractual commitments, conditions, or assurances from AWS, its affiliates, suppliers, or licensors. The responsibilities and liabilities of AWS to its customers are controlled by AWS agreements, and this document is not part of, nor does it modify, any agreement between AWS and its customers.</p>
 </div>
 <div class="paragraph">
-<p>The software included with this paper is licensed under the Apache License, version 2.0 (the "License"). You may not use this file except in compliance with the License. A copy of the License is located at <a href="http://aws.amazon.com/apache2.0/" class="bare">http://aws.amazon.com/apache2.0/</a> or in the accompanying "license" file. This code is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied. See the License for specific language governing permissions and limitations.</p>
+<p>The software included with this paper is licensed under the Apache License, version 2.0 (the "License"). You may not use this file except in compliance with the License. A copy of the License is located at <a href="http://aws.amazon.com/apache2.0/" target="_blank" rel="noopener">http://aws.amazon.com/apache2.0/</a> or in the accompanying "license" file. This code is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied. See the License for specific language governing permissions and limitations.</p>
 </div>
 </div>
 </div>
 </div>
 <p class="footer-text">
 <!-- We can use document attributes: -->
-<!-- Generated with Asciidoctor v2.0.10. -->
-<a href="https://aws.amazon.com/privacy/">Privacy</a> | <a href="https://aws.amazon.com/terms/">Site terms</a> | &copy; 2020, Amazon Web Services, Inc. or its affiliates and ConnectSense. All rights reserved.
+<!-- Generated with Asciidoctor v2.0.12. -->
+<a href="https://aws.amazon.com/privacy/">Privacy</a> | <a href="https://aws.amazon.com/terms/">Site terms</a> | &copy; 2021, Amazon Web Services, Inc. or its affiliates and Grid Connect and Trek10. All rights reserved.
 </p>
 </body>
 </html>
 <!--
 repo commit:
-53dbe1e3495dd502047a5fafbd0ab8adbf2e3b80
+a8e2b8dc639b54a9073e97f30d9c933e820abd7b
 
 submodule config:
--fbc33f8c0e0eda17f6fea1a143ecc041de37b15c docs/boilerplate
++cad46a0000057f1379537ff5a22d6ec96487513c docs/boilerplate (heads/main)
 -->
