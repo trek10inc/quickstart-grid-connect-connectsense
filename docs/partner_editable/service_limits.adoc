@@ -3,13 +3,13 @@
 |Resource |This deployment uses
 
 // Space needed to maintain table headers
-|Identity and Access Management (IAM) roles | 3
+|IAM roles | 3
 |API Gateway |1
-|API Gateway API Key |1
-|API Gateway Endpoints |2
-|Lambda Function |2
-|IoT Topic Rule |2
-|IoT Analytics Channel |1
-|IoT Analytics Datastore |1
-|SNS Topic |1
+|API Gateway API key |1
+|API Gateway endpoints |2
+|Lambda functions |2
+|AWS IoT Core topic rules |2
+|AWS IoT Analytics channel |1
+|AWS IoT Analytics data store |1
+|Amazon SNS topic |1
 |===
