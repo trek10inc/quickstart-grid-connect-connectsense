@@ -841,7 +841,8 @@ p.footer-text a{color:#d7d8d8}
 <p><strong>March 2021</strong><br>
 <em>Gary Marrs and Paco Rodríguez, Grid Connect</em><br>
 <em>Carlos Lemus, Trek10</em><br>
-<em>Irshad Buchh, AWS SI Partner Management team, and Dylan Owen, AWS Quick Start team</em></p>
+<em>Irshad Buchh, AWS SI Partner Management team</em><br>
+<em>Dylan Owen, AWS Quick Start team</em></p>
 </div>
 <div class="admonitionblock tip text-left">
 <table>
@@ -897,48 +898,37 @@ Amazon may share user-deployment information with the AWS Partner that collabora
 <div class="title">Figure 1. The ConnectSense Smart Power Cord</div>
 </div>
 <div class="paragraph">
-<p>This Quick Start works with a model of the SPC that&#8217;s designed for AWS. Here are some examples of things you might do with this deployment:</p>
+<p>This Quick Start works with a model of the SPC that&#8217;s designed for AWS. Here are some examples of things you might do remotely with this deployment:</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>Monitor power.</p>
-</li>
-<li>
-<p>Turn power on or off remotely.</p>
-</li>
-<li>
-<p>Reboot remotely.</p>
-</li>
-<li>
-<p>Sense usage.</p>
-</li>
-<li>
-<p>Provide data that leads to better maintenance schedules.</p>
-</li>
-<li>
-<p>Power cycle a load on or off.</p>
-</li>
-<li>
-<p>Read voltage.</p>
-</li>
-<li>
-<p>Read current in amps.</p>
-</li>
-<li>
-<p>Read the power factor.</p>
-</li>
-<li>
-<p>Get a calculated value for the watt-hours.</p>
-</li>
-<li>
-<p>Monitor and control pumps, commercial appliances, and electric-vehicle chargers.</p>
-</li>
-<li>
-<p>Reduce electricity consumption by switching off the power supply to groups of customers (load shedding) when the entire system is at risk.</p>
-</li>
-</ul>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Monitor power.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Turn power on or off.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reboot.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sense usage.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Get a calculated value for the watt-hours.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Power cycle a load on or off.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Read voltage.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Read current in amps.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Read the power factor.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Provide data that leads to better maintenance schedules.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Monitor and control pumps, commercial appliances, and electric-vehicle chargers.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reduce electricity consumption by switching off the power supply to groups of customers (load shedding) when the entire system is at risk.</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>The SPC uses a Secure Element authentication chip that&#8217;s preloaded with credentials to help you provision your cloud application securely.</p>
 </div>
@@ -946,7 +936,7 @@ Amazon may share user-deployment information with the AWS Partner that collabora
 <p>The Quick Start uses several AWS services that give you a way to test your SPC against a realistic backend application. You can augment the Quick Start with additional services and features to create a full-fledged, production-grade application.</p>
 </div>
 <div class="paragraph">
-<p>For general information on ConnectSense smart-home devices, see the <a href="https://iot.connectsense.com/" target="_blank" rel="noopener">ConnectSense website</a>. For details on the SPC for AWS, see [product link page?]</p>
+<p>For general information on ConnectSense smart-home devices, see the <a href="https://iot.connectsense.com/" target="_blank" rel="noopener">ConnectSense website</a>. For details on the SPC, see <a href="https://www.gridconnect.com/products/smart-power-cord-aws" target="_blank" rel="noopener">ConnectSense Smart Power Cord for AWS</a>.</p>
 </div>
 </div>
 </div>
@@ -1309,13 +1299,6 @@ Certain Regions are available on an opt-in basis. For more information, see <a h
 <div class="title">Figure 4. AWS CloudFormation stack showing the link to the API key&#8217;s physical ID</div>
 </div>
 </li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a" start="3">
 <li>
 <p>Next to <strong>API key</strong>, choose <strong>Show</strong>, as shown in <a href="#api-key">Figure 5</a>. This reveals the ID value required for registering your physical device. Save this value for use in configuring your SPC.</p>
 <div id="api-key" class="imageblock">
@@ -1323,6 +1306,9 @@ Certain Regions are available on an opt-in basis. For more information, see <a h
 <a class="image" href="images/cloudformation-apikey.png"><img src="images/cloudformation-apikey.png" alt="CloudFormation API key" width="60%"></a>
 </div>
 <div class="title">Figure 5. API Gateway, API key</div>
+</div>
+</li>
+</ol>
 </div>
 </li>
 </ol>
@@ -1599,8 +1585,8 @@ and to share your customizations with others.</p>
 </html>
 <!--
 repo commit:
-6058f74310b264ae0fe39c74d1dce228c147bb9b
+6478345202a5d4c05b5eafaf0792197198d939fc
 
 submodule config:
-+cad46a0000057f1379537ff5a22d6ec96487513c docs/boilerplate (heads/main)
+ bdfd9dc86ef0fe11867476f32a0ed4e8a41b1158 docs/boilerplate (heads/main)
 -->
