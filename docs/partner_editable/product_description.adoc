@@ -8,6 +8,7 @@ image::../images/smart-power-cord.png[SPC-cord-itself, 55%]
 
 This Quick Start works with a model of the {partner-product-short-name} that's designed for AWS. Here are some examples of things you might do remotely with this deployment: 
 |===
+
 | Monitor power. | Turn power on or off. | Reboot. 
 | Sense usage. | Get a calculated value for the watt-hours. | Power cycle a load on or off. 
 | Read voltage. | Read current in amps. | Read the power factor. 
