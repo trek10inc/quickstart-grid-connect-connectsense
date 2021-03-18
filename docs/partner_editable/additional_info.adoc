@@ -17,8 +17,7 @@ After you've deployed the stack, you must retrieve the API Gateway URL and API k
 .AWS CloudFormation stack showing the link to the API key's physical ID
 [link=images/cloudformation-stack.png]
 image::../images/cloudformation-stack.png[CloudFormation Stack, 80%]
-
-[start=3]
++
 .. Next to *API key*, choose *Show*, as shown in <<api-key>>. This reveals the ID value required for registering your physical device. Save this value for use in configuring your {partner-product-short-name}.
 +
 [#api-key]
