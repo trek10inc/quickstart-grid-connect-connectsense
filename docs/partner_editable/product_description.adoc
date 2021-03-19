@@ -1,12 +1,12 @@
 :xrefstyle: short
 
-You can use this Quick Start with the {partner-product-short-name}, shown in <<spc>>, to connect your legacy edge devices and machines—such as motors, pumps, compressors, electric cars, or IT equipment—with an IoT architecture on AWS. You can ingest power-related metrics from any 110-VAC or 240-VAC device into AWS IoT Core.
+The {partner-product-short-name} is distributed by Grid Connect. You can use this Quick Start with the {partner-product-short-name}, shown in <<spc>>, to connect your legacy edge devices and machines—such as motors, pumps, compressors, electric cars, and IT equipment—to an IoT architecture on AWS. AWS IoT Core can ingest power-related metrics from any 110 V or 240 V device.
 
 [#spc]
 .The {partner-product-name}
 image::../images/smart-power-cord.png[SPC-cord-itself, 55%]
 
-This Quick Start works with a model of the {partner-product-short-name} that's designed for AWS. Here are some examples of things you might do remotely with this deployment: 
+This Quick Start works with a model of the {partner-product-short-name} that's designed for AWS. The following are some examples of things you might do remotely with this deployment: 
 |===
 
 | Monitor power. | Turn power on or off. | Reboot. 
@@ -15,8 +15,6 @@ This Quick Start works with a model of the {partner-product-short-name} that's d
 | Provide data that leads to better maintenance schedules. | Monitor and control pumps, commercial appliances, and electric-vehicle chargers. | Reduce electricity consumption by switching off the power supply to groups of customers (load shedding) when the entire system is at risk. 
 |===
 
-The {partner-product-short-name} uses a Secure Element authentication chip that's preloaded with credentials to help you provision your cloud application securely.
-
-The Quick Start uses several AWS services that give you a way to test your {partner-product-short-name} against a realistic backend application. You can augment the Quick Start with additional services and features to create a full-fledged, production-grade application.
+The {partner-product-short-name} uses a Secure Element authentication chip that's preloaded with credentials to help you provision your cloud application securely. You can augment the Quick Start with additional services and features to create a full-fledged, production-grade application.
 
 For general information on ConnectSense smart-home devices, see the https://iot.connectsense.com/[ConnectSense website^]. For details on the {partner-product-short-name}, see https://www.gridconnect.com/products/smart-power-cord-aws[ConnectSense Smart Power Cord for AWS^].
