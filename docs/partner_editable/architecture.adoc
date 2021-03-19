@@ -9,8 +9,8 @@ image::../images/connectsense-spc-architecture-diagram.png[Architecture, 75%]
 As shown in <<architecture1>>, the Quick Start sets up the following:
 
 * Amazon API Gateway for ConnectSense devices to self-provision.
-* An Amazon Simple Notification Service (Amazon SNS) topic for publishing alerts.
-* AWS Lambda: one function to provision devices and one to generate alerts to send to the  Amazon SNS topic. The Lambda functions require AWS Identity and Access Management (IAM) roles created by the Quick Start.
-* AWS IoT Core for your {partner-product-short-name} to publish device metrics.
-* AWS IoT Analytics pipeline, channel, data store, and dataset for processing the {partner-product-short-name} metrics.
-* An Amazon QuickSight dashboard for data visualization.
+* AWS Lambda: one function to provision devices and one to generate alerts to send to the Amazon Simple Notification Service (Amazon SNS) topic. The Lambda functions require AWS Identity and Access Management (IAM) roles created by the Quick Start.
+* An Amazon SNS topic for publishing alerts.
+* AWS IoT Core to publish the device metrics.
+* AWS IoT Analytics to provide a pipeline, channel, data store, and dataset for processing the device metrics.
+* Amazon QuickSight to provide a dashboard for data visualization.
