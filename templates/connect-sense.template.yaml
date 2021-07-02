@@ -4,6 +4,12 @@ Description: Reference deployment for ingestion of data from ConnectSense IoT de
 Metadata:
   QuickStartDocumentation:
     EntrypointName: "Parameters for deploying this Quick Start"
+  cfn-lint:
+    config:
+      ignore_checks:
+        - E9101
+      # ignore_reason:
+      #   - 'execute' is part of the API GW
   About:
     Description: >
       This template is provided by Grid Connect and Trek10 in collaboration with AWS. It creates a 
@@ -161,12 +167,12 @@ Resources:
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
-              - Sid: AllowAllUsersToListAccounts
+              - Sid: IoTBatchPutMessage
                 Effect: Allow
                 Action:
                   - iotanalytics:BatchPutMessage
-                  - s3:PutObject
-                Resource: "*"
+                  # - s3:PutObject
+                Resource: !Sub "arn:${AWS::Partition}:iotanalytics:${AWS::Region}:${AWS::AccountId}:*"
 
   IoTAnalyticsDataset:
     Type: "AWS::IoTAnalytics::Dataset"
@@ -356,25 +362,28 @@ Resources:
                   - "iot:AddThingToThingGroup"
                   - "iot:AttachPolicy"
                   - "iot:AttachPrincipalPolicy"
-                  - "iot:AttachThingPrincipal"
-                  - "iot:CreateKeysAndCertificate"
                   - "iot:CreatePolicy"
                   - "iot:CreateThing"
                   - "iot:DescribeCertificate"
                   - "iot:DescribeThing"
                   - "iot:DescribeThingType"
                   - "iot:GetPolicy"
-                  - "iot:ListPolicies"
                   - "iot:ListThingGroupsForThing"
-                  - "iot:ListThingPrincipals"
                   - "iot:ListTargetsForPolicy"
                   - "iot:DetachPolicy"
-                  - "iot:DetachThingPrincipal"
                   - "iot:UpdateCertificate"
                   - "iot:DeleteCertificate"
-                  - "iot:RegisterThing"
                   - "iot:DeleteThing"
                   - "iot:GetThingShadow"
+                Resource: !Sub "arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:*"
+              - Effect: "Allow"
+                Action:
+                  - "iot:AttachThingPrincipal"
+                  - "iot:CreateKeysAndCertificate"
+                  - "iot:ListPolicies"
+                  - "iot:ListThingPrincipals"
+                  - "iot:DetachThingPrincipal"
+                  - "iot:RegisterThing"
                   - "iot:DescribeEndpoint"
                   - "iot:RegisterCertificateWithoutCA"
                 Resource: "*"
