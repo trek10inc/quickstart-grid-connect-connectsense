@@ -2,10 +2,10 @@
 :partner-product-name: ConnectSense Smart Power Cord
 :partner-product-short-name: SPC
 :partner-company-name: Grid Connect and Trek10
-:doc-month: March
+:doc-month: October
 :doc-year: 2021
 :partner-contributors: Gary Marrs and Paco Rodríguez, Grid Connect
-:other-contributors: Carlos Lemus, Trek10
+:other-contributors: Carlos Lemus and Justin Courtright, Trek10
 :aws-contributors: Irshad Buchh, AWS SI Partner Management team
 :quickstart-contributors: Dylan Owen, AWS Quick Start team
 :deployment_time: 10 minutes
