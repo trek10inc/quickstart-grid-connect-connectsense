@@ -91,7 +91,7 @@ Parameters:
   QSS3KeyPrefix:
     AllowedPattern: ^([0-9a-zA-Z-.]+/)*$
     ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), dots (.) and forward slash (/). The prefix should end with a forward slash (/).
-    Default: quickstart-grid-connect-sitewise/
+    Default: quickstart-grid-connect-connectsense/
     Description: S3 key prefix that is used to simulate a directory for your copy of the
       Quick Start assets. Keep the default prefix unless you are customizing
       the template. Changing this prefix updates code references to point to
@@ -118,7 +118,7 @@ Resources:
     Properties:
       VersioningConfiguration:
         Status: Enabled
-      BucketName: !Sub ${Client}-mlstage-bucket
+
 
   TempETLWorkspaceBucket:
     Type: AWS::S3::Bucket
@@ -298,7 +298,7 @@ Resources:
     Properties:
       ContentUri:
         Bucket: !Ref QSS3BucketName
-        Key: !Sub ${QSS3KeyPrefix}functions/packages/MLSharedLibraries
+        Key: !Sub ${QSS3KeyPrefix}functions/packages/MLSharedLibraries.zip
       CompatibleRuntimes:
         - python3.8
     Metadata:

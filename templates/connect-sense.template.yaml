@@ -75,7 +75,28 @@ Parameters:
     Type: Number
     MinValue: 1
 
+  DeploySitewiseML:
+    Description: If True, will deploy the sitewise ML Stack
+    Type: String
+    Default: false
+    AllowedValues: [ true, false ]
+
+Conditions:
+  ShouldCreateSitewiseML:
+    !Equals [ true, !Ref DeploySitewiseML ]
+
 Resources:
+
+  SitewiseMLDeployment:
+    Type: AWS::CloudFormation::Stack
+    Condition: ShouldCreateSitewiseML
+    Properties:
+      Parameters:
+        SNSAlertTopicName: !GetAtt AlertsTopic.TopicName
+      TemplateURL: !Sub ${QSS3BucketName}/${QSS3KeyPrefix}/templates/sitewise-ml-template.yaml
+
+
+
   ApiGatewayApi:
     Type: AWS::Serverless::Api
     Properties:
