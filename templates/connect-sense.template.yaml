@@ -92,8 +92,10 @@ Resources:
     Condition: ShouldCreateSitewiseML
     Properties:
       Parameters:
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
         SNSAlertTopicName: !GetAtt AlertsTopic.TopicName
-      TemplateURL: !Sub ${QSS3BucketName}/${QSS3KeyPrefix}/templates/sitewise-ml-template.yaml
+      TemplateURL: !Sub "https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}templates/sitewise-ml.template.yaml"
 
 
 
