@@ -1,0 +1,688 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: 'SAM Template Gridconnect Sitewise Quickstart Addition'
+Metadata:
+  QuickStartDocumentation:
+    EntrypointName: "Parameters for deploying this Quick Start"
+  cfn-lint:
+    config:
+      ignore_checks:
+        - E9101
+  About:
+    Description: >
+      This template is provided by Grid Connect and Trek10 in collaboration with AWS. It creates a
+      serverless IoT backend integating with Sitewise and Sagemaker to give predictive maintenance capabilities to the
+      ConnectSense Smart Power Cord.
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: AWS Glue Configuration
+        Parameters:
+          - ScriptKey
+          - DataPrefix
+      - Label:
+          default: AWS IoT Sitewise Configuration
+        Parameters:
+          - AssetName
+      - Label:
+          default: AWS Quick Start configuration
+        Parameters:
+          - Client
+          - IngestionTopic
+          - QSS3BucketName
+          - QSS3KeyPrefix
+
+    ParameterLabels:
+      QSS3BucketName:
+        default: Quick Start S3 bucket name
+      QSS3KeyPrefix:
+        default: Quick Start S3 key prefix
+
+Parameters:
+  Client:
+    Type: String
+    Description: Name of the client the deployment is for
+    Default: gridconnect
+
+  IngestionTopic:
+    Type: String
+    Description: The topic that data is sent on
+    Default: iot8020/+/metrics
+
+  AssetName:
+    Type: String
+    Description: The name of the asset in AWS
+    Default: my-power-cord
+
+  ThresholdValue:
+    Type: Number
+    Description: The threshold value to trigger SNS notifications above
+    Default: 1.7
+
+  ScriptKey:
+    Type: String
+    Description: Key of the script to be used
+    Default: glue_script.py
+
+  DataPrefix:
+    Type: String
+    Default: data
+
+  ModelOutputPrefix:
+    Type: String
+    Default: rcf-anomaly-detector
+
+  SNSAlertTopicName:
+    Type: String
+    Default: ""
+
+  QSS3BucketName:
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    ConstraintDescription: Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
+    Default: aws-quickstart
+    Description: Name of the S3 bucket for your copy of the Quick Start assets.
+      Keep the default name unless you are customizing the template.
+      Changing the name updates code references to point to a new Quick
+      Start location. This name can include numbers, lowercase letters,
+      uppercase letters, and hyphens, but do not start or end with a hyphen (-).
+      See https://aws-quickstart.github.io/option1.html.
+    Type: String
+
+  QSS3KeyPrefix:
+    AllowedPattern: ^([0-9a-zA-Z-.]+/)*$
+    ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), dots (.) and forward slash (/). The prefix should end with a forward slash (/).
+    Default: quickstart-grid-connect-connectsense/
+    Description: S3 key prefix that is used to simulate a directory for your copy of the
+      Quick Start assets. Keep the default prefix unless you are customizing
+      the template. Changing this prefix updates code references to point to
+      a new Quick Start location. This prefix can include numbers, lowercase
+      letters, uppercase letters, hyphens (-), and forward slashes (/). End with a forward slash.
+      See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html
+      and https://aws-quickstart.github.io/option1.html.
+    Type: String
+
+Conditions:
+  SNSNotProvided:
+    "Fn::Equals":
+      - !Ref SNSAlertTopicName
+      - ""
+  SNSProvided:
+    "Fn::Not": [Condition: SNSNotProvided]
+
+Resources:
+  ScriptBucket:
+    Type: AWS::S3::Bucket
+
+  MLStageBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
+
+
+  TempETLWorkspaceBucket:
+    Type: AWS::S3::Bucket
+
+  GlueDatabase:
+    Type: AWS::Glue::Database
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseInput:
+        Description: Glue Data for model training
+        Name: !Sub ${Client}-glue-db
+
+  GlueRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service: glue.amazonaws.com
+      Policies:
+        - PolicyName: "root"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action: "s3:*"
+                Resource:
+                  - !Sub arn:aws:s3:::${ScriptBucket}
+                  - !Sub arn:aws:s3:::${ScriptBucket}/*
+                  - !Sub arn:aws:s3:::${SitewiseDataArchiveBucket}
+                  - !Sub arn:aws:s3:::${SitewiseDataArchiveBucket}/*
+                  - !Sub arn:aws:s3:::${TempETLWorkspaceBucket}
+                  - !Sub arn:aws:s3:::${TempETLWorkspaceBucket}/*
+                  - !Sub arn:aws:s3:::${MLStageBucket}
+                  - !Sub arn:aws:s3:::${MLStageBucket}/*
+              - Effect: "Allow"
+                Action: "logs:*"
+                Resource: "*"
+              - Effect: "Allow"
+                Action: "glue:*"
+                Resource: "*"
+
+  IngestCrawler:
+    Type: AWS::Glue::Crawler
+    Properties:
+      Name: !Sub ${Client}-crawler
+      Role: !GetAtt GlueRole.Arn
+      DatabaseName: !Ref GlueDatabase
+      Targets:
+        S3Targets:
+          - Path: !Ref SitewiseDataArchiveBucket
+
+  CsvJob:
+    Type: AWS::Glue::Job
+    Properties:
+      Command:
+        Name: glueetl
+        ScriptLocation: !Sub "s3://${ScriptBucket}/${ScriptKey}"
+      DefaultArguments:
+        "--database": !Ref GlueDatabase
+        "--ingest_table": !Join [ "_", !Split [ "-", !Ref SitewiseDataArchiveBucket ] ]
+        "--target_bucket": !Sub "s3://${MLStageBucket}/${DataPrefix}/"
+        "--TempDir": !Sub "s3://${TempETLWorkspaceBucket}/"
+
+      MaxRetries: 0
+      GlueVersion: "2.0"
+      Name: !Sub ${Client}-csv-job
+      Role: !GetAtt GlueRole.Arn
+
+  StartGlueJobFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri:
+        Bucket: !Ref QSS3BucketName
+        Key: !Sub ${QSS3KeyPrefix}functions/packages/StartGlueJobFunction.zip
+      FunctionName: !Sub ${Client}-start-glue-handler
+      Timeout: 900
+      Handler: handlers.glue_trigger_lambda.handler
+      Runtime: python3.8
+      Events:
+        CWSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: "rate(24 hours)"
+            Name: OnceADay
+            Description: Cron job that runs every 24 hours
+            Enabled: true
+      Environment:
+        Variables:
+          LOGGING_LEVEL: INFO
+          JOB_NAME: !Ref CsvJob
+          CRAWLER_NAME: !Ref IngestCrawler
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - glue:*
+              Resource: '*'
+
+  StartMLTrainingDeploymentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri:
+        Bucket: !Ref QSS3BucketName
+        Key: !Sub ${QSS3KeyPrefix}functions/packages/StartMLTrainingDeploymentFunction.zip
+      FunctionName: !Sub ${Client}-start-ml-training-deployment
+      Timeout: 900
+      Handler: handlers.training_and_deployment_lambda.handler
+      Runtime: python3.8
+      MemorySize: 512
+      Layers:
+        - !Ref MLSharedLibraries
+      Events:
+        S3Event:
+          Type: S3
+          Properties:
+            Bucket: !Ref MLStageBucket
+            Events:
+              - s3:ObjectCreated:Put
+      Environment:
+        Variables:
+          LOGGING_LEVEL: INFO
+          ROLE_ARN: !Sub arn:aws:iam::${AWS::AccountId}:role/${Client}}-sagemaker-role
+          MODEL_OUTPUT_PREFIX: !Ref ModelOutputPrefix
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action: "sagemaker:*"
+              Resource: '*'
+            - Effect: Allow
+              Action: "s3:*"
+              Resource: "*"
+            - Effect: Allow
+              Action: "iam:PassRole"
+              Resource: "*"
+            - Effect: "Allow"
+              Action: "logs:*"
+              Resource: "*"
+
+
+  SagemakerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${Client}-sagemaker-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service: sagemaker.amazonaws.com
+      Policies:
+        - PolicyName: "root"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action: "s3:*"
+                Resource:
+                  - !Sub arn:aws:s3:::${MLStageBucket}
+                  - !Sub arn:aws:s3:::${MLStageBucket}/*
+              - Effect: "Allow"
+                Action: "logs:*"
+                Resource: "*"
+              - Effect: "Allow"
+                Action: "sagemaker:*"
+                Resource: "*"
+
+
+  MLSharedLibraries:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri:
+        Bucket: !Ref QSS3BucketName
+        Key: !Sub ${QSS3KeyPrefix}functions/packages/MLSharedLibraries.zip
+      CompatibleRuntimes:
+        - python3.8
+    Metadata:
+      BuildMethod: makefile
+  
+  SitewiseRuleRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service: iot.amazonaws.com
+      Policies:
+        - PolicyName: SitewiseRulePolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: iotsitewise:BatchPutAssetPropertyValue
+                Resource: "*"
+
+  PowerCordAssetModel:
+    Type: AWS::IoTSiteWise::AssetModel
+    Properties:
+      AssetModelDescription: Asset model for the power cord
+      AssetModelName: power-cord-asset-model
+      AssetModelProperties:
+        - DataType: "BOOLEAN"
+          LogicalId: "relay_on"
+          Name: "relay_on"
+          Type:
+            TypeName: Measurement
+
+        - DataType: "DOUBLE"
+          LogicalId: "volts"
+          Name: "volts"
+          Type:
+            TypeName: Measurement
+
+          Unit: "V"
+        - DataType: "DOUBLE"
+          LogicalId: "amps"
+          Name: "amps"
+          Type:
+            TypeName: Measurement
+
+          Unit: "A"
+        - DataType: "DOUBLE"
+          LogicalId: "watts"
+          Name: "watts"
+          Type:
+            TypeName: Measurement
+
+          Unit: "W"
+        - DataType: "INTEGER"
+          LogicalId: "power_factor"
+          Name: "power_factor"
+          Type:
+            TypeName: Measurement
+
+        - DataType: "DOUBLE"
+          LogicalId: "watt_hours"
+          Name: "watt_hours"
+          Type:
+            TypeName: Measurement
+          Unit: "h"
+
+  PowerCordAsset:
+    Type: AWS::IoTSiteWise::Asset
+    Properties:
+      AssetModelId: !Ref PowerCordAssetModel
+      AssetName: !Ref AssetName
+      AssetProperties:
+        - Alias: !Sub "/${Client}/${PowerCordAssetModel}/${AssetName}/relay_on"
+          LogicalId: "relay_on"
+          NotificationState: ENABLED
+        - Alias: !Sub "/${Client}/${PowerCordAssetModel}/${AssetName}/volts"
+          LogicalId: "volts"
+          NotificationState: ENABLED
+        - Alias: !Sub "/${Client}/${PowerCordAssetModel}/${AssetName}/amps"
+          LogicalId: "amps"
+          NotificationState: ENABLED
+        - Alias: !Sub "/${Client}/${PowerCordAssetModel}/${AssetName}/watts"
+          LogicalId: "watts"
+          NotificationState: ENABLED
+        - Alias: !Sub "/${Client}/${PowerCordAssetModel}/${AssetName}/power_factor"
+          LogicalId: "power_factor"
+          NotificationState: ENABLED
+        - Alias: !Sub "/${Client}/${PowerCordAssetModel}/${AssetName}/watt_hours"
+          LogicalId: "watt_hours"
+          NotificationState: ENABLED
+
+  SitewiseRoutingRule:
+    Type: AWS::IoT::TopicRule
+    Properties:
+      TopicRulePayload:
+        Sql: !Sub SELECT * from '${IngestionTopic}'
+        RuleDisabled: false
+        Actions:
+          - IotSiteWise:
+              RoleArn: !GetAtt SitewiseRuleRole.Arn
+              PutAssetPropertyValueEntries:
+                - PropertyValues:
+                    - Quality: "GOOD"
+                      Timestamp:
+                        TimeInSeconds: "${timestamp() / 1000}"
+                      Value:
+                        BooleanValue: "${relay_on}"
+                  PropertyAlias: !Sub "/${Client}/${PowerCordAssetModel}/${AssetName}/relay_on"
+
+
+                - PropertyValues:
+                    - Quality: "GOOD"
+                      Timestamp:
+                        TimeInSeconds: "${timestamp() / 1000}"
+                      Value:
+                        DoubleValue: "${volts}"
+                  PropertyAlias: !Sub "/${Client}/${PowerCordAssetModel}/${AssetName}/volts"
+
+
+                - PropertyValues:
+                    - Quality: "GOOD"
+                      Timestamp:
+                        TimeInSeconds: "${timestamp() / 1000}"
+                      Value:
+                        DoubleValue: "${amps}"
+                  PropertyAlias: !Sub "/${Client}/${PowerCordAssetModel}/${AssetName}/amps"
+
+
+                - PropertyValues:
+                    - Quality: "GOOD"
+                      Timestamp:
+                        TimeInSeconds: "${timestamp() / 1000}"
+                      Value:
+                        DoubleValue: "${watts}"
+                  PropertyAlias: !Sub "/${Client}/${PowerCordAssetModel}/${AssetName}/watts"
+
+
+                - PropertyValues:
+                    - Quality: "GOOD"
+                      Timestamp:
+                        TimeInSeconds: "${timestamp() / 1000}"
+                      Value:
+                        IntegerValue: "${power_factor}"
+                  PropertyAlias: !Sub "/${Client}/${PowerCordAssetModel}/${AssetName}/power_factor"
+
+
+                - PropertyValues:
+                    - Quality: "GOOD"
+                      Timestamp:
+                        TimeInSeconds: "${timestamp() / 1000}"
+                      Value:
+                        DoubleValue: "${watt_hours}"
+                  PropertyAlias: !Sub "/${Client}/${PowerCordAssetModel}/${AssetName}/watt_hours"
+
+  SitewiseDataArchiveBucket:
+    Type: AWS::S3::Bucket
+
+  SitewiseArchiveRule:
+    Type: AWS::IoT::TopicRule
+    Properties:
+      TopicRulePayload:
+        Actions:
+          - Firehose:
+              BatchMode: false
+              DeliveryStreamName: !Ref DataFirehose
+              RoleArn: !GetAtt DataArchiveRuleRole.Arn
+
+        Description: Puts the sitewise republished data into a kinesis stream for archiving
+        RuleDisabled: false
+        AwsIotSqlVersion: '2016-03-23'
+        Sql: !Sub "SELECT * FROM '$aws/sitewise/asset-models/${PowerCordAssetModel}/assets/+/properties/+'"
+
+  DataArchiveRuleRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "iot.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: !Sub KinesisArchivePolicy-${Client}
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - firehose:*
+                Resource: !GetAtt DataFirehose.Arn
+
+        - PolicyName: LogInCloudWatch
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                  - logs:PutRetentionPolicy
+                Resource: "*"
+
+  DataFirehoseRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            - Sid: ""
+              Effect: Allow
+              Principal:
+                Service: firehose.amazonaws.com
+              Action: "sts:AssumeRole"
+        Path: "/"
+        Policies:
+          - PolicyName: !Sub "data_firehose_policy_storage-${Client}"
+            PolicyDocument:
+              Version: 2012-10-17
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - "s3:AbortMultipartUpload"
+                    - "s3:GetBucketLocation"
+                    - "s3:GetObject"
+                    - "s3:ListBucket"
+                    - "s3:ListBucketMultipartUploads"
+                    - "s3:PutObject"
+                  Resource:
+                    - !GetAtt SitewiseDataArchiveBucket.Arn
+                    - !Sub "${SitewiseDataArchiveBucket.Arn}*"
+                - Effect: Allow
+                  Action:
+                    - "lambda:InvokeFunction"
+                    - "lambda:GetFunctionConfiguration"
+                  Resource:
+                    - !Sub "${TransformationHandler.Arn}*"
+
+  DataFirehose:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties:
+      DeliveryStreamType: DirectPut
+      ExtendedS3DestinationConfiguration:
+        CompressionFormat: UNCOMPRESSED
+        Prefix: ""
+        RoleARN: !GetAtt DataFirehoseRole.Arn
+        BucketARN: !GetAtt SitewiseDataArchiveBucket.Arn
+        ProcessingConfiguration:
+          Enabled: True
+          Processors:
+            - Parameters:
+                - ParameterName: LambdaArn
+                  ParameterValue: !GetAtt TransformationHandler.Arn
+              Type: Lambda
+        BufferingHints:
+          IntervalInSeconds: 60
+          SizeInMBs: 1
+
+  TransformationHandlerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service: lambda.amazonaws.com
+      Policies:
+        - PolicyName: KinesisAccessPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: kinesis:*
+                Resource: "*"
+        - PolicyName: IoTSitewiseAccessPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: iotsitewise:DescribeAssetModel
+                Resource: "*"
+
+  TransformationHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri:
+        Bucket: !Ref QSS3BucketName
+        Key: !Sub ${QSS3KeyPrefix}functions/packages/TransformationHandler.zip
+      FunctionName: !Sub ${Client}-transform-handler
+      Role: !GetAtt TransformationHandlerRole.Arn
+      Timeout: 90
+      Handler: handlers.transformation_lambda.handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          ASSET_MODEL_ID: !Ref PowerCordAssetModel
+
+  InferenceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri:
+        Bucket: !Ref QSS3BucketName
+        Key: !Sub ${QSS3KeyPrefix}functions/packages/InferenceFunction.zip
+      FunctionName: !Sub ${Client}-inference-handler
+      Timeout: 90
+      Handler: handlers.inference_lambda.handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          MODEL_OUTPUT_PREFIX: !Ref ModelOutputPrefix
+          PARAM_NAME: !Ref ThresholdSSMParam
+          TOPIC_ARN: !If [SNSProvided,
+                          !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:${SNSAlertTopicName}",
+                          !Ref AnomolyNotificationTopic]
+      Events:
+        S3Event:
+          Type: S3
+          Properties:
+            Bucket: !Ref SitewiseDataArchiveBucket
+            Events:
+              - s3:ObjectCreated:Put
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action: "s3:*"
+              Resource: "*"
+            - Effect: Allow
+              Action: "sagemaker:*"
+              Resource: "*"
+            - Effect: Allow
+              Action: "ssm:*"
+              Resource: "*"
+            - Effect: Allow
+              Action: "sns:*"
+              Resource: "*"
+
+
+  ThresholdSSMParam:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: Parameter to store threshold value to trigger sns notifications on
+      Type: String
+      Name: !Sub ${Client}-threshold
+      Value: !Ref ThresholdValue
+
+
+  AnomolyNotificationTopic:
+    Condition: SNSNotProvided
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub ${Client}-anomoly-topic
+
+Outputs:
+  DataIngestionTopic:
+    Description: The MQTT topic to send data to
+    Value: !Ref IngestionTopic
+  AssetModelId:
+    Description: The ID of the asset model created by the Quickstart template
+    Value: !Ref PowerCordAssetModel
+  ArchiveBucketName:
+    Description: Name of the bucket that houses the archived records from sitewise
+    Value: !Ref SitewiseDataArchiveBucket
+  RelayTopic:
+    Description: The iot relay topic that archives the data
+    Value: !Sub "$aws/sitewise/asset-models/${PowerCordAssetModel}/assets/+/properties/+"
+  NotificationTopic:
+    Description: The notification SNS topic name
+    Value: !If [SNSProvided,
+                !Ref SNSAlertTopicName,
+                !GetAtt AnomolyNotificationTopic.TopicName]
+  GlueScriptBucket:
+    Description: The bucket that houses the glue script for glue job
+    Value: !Ref ScriptBucket
+
+
