@@ -18,11 +18,12 @@ s3_client = boto3.client("s3")
 
 threshold = float(ssm_client.get_parameter(Name=PARAM_NAME)["Parameter"]["Value"])
 endpoint_name = None
-existing_endpoints = sagemaker_client.list_endpoints()['Endpoints']
+existing_endpoints = sagemaker_client.list_endpoints()["Endpoints"]
 for e in existing_endpoints:
-    if e['EndpointName'].startswith("randomcutforest"):
-        endpoint_name = e['EndpointName']
+    if e["EndpointName"].startswith("randomcutforest"):
+        endpoint_name = e["EndpointName"]
         break
+
 
 def handler(event, context):
     volts = []
@@ -110,9 +111,7 @@ def handler(event, context):
             csv_payload = csv_file.getvalue()
 
             response = sagemaker_runtime_client.invoke_endpoint(
-                EndpointName=endpoint_name,
-                Body=csv_payload,
-                ContentType="text/csv"
+                EndpointName=endpoint_name, Body=csv_payload, ContentType="text/csv"
             )
             body = json.loads(response["Body"].read().decode("utf-8"))
             scores = body["scores"]

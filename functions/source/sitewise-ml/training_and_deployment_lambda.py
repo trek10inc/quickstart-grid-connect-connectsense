@@ -29,12 +29,12 @@ def handler(event, context):
 
 def create_model(training_data, s3_bucket):
     session = sagemaker.Session()
-    endpoints = sagemaker_client.list_endpoints()['Endpoints']
+    endpoints = sagemaker_client.list_endpoints()["Endpoints"]
     endpoint_exists = False
     existing_endpoint_name = ""
     for e in endpoints:
-        if e['EndpointName'].startswith("randomcutforest"):
-            existing_endpoint_name = e['EndpointName']
+        if e["EndpointName"].startswith("randomcutforest"):
+            existing_endpoint_name = e["EndpointName"]
             endpoint_exists = True
             break
     rcf = RandomCutForest(
@@ -47,8 +47,7 @@ def create_model(training_data, s3_bucket):
         num_trees=NUM_OF_TREES,
     )
     numpy_data = training_data.to_numpy()
-    record_set = rcf.record_set(numpy_data, channel="train",
-                                encrypt=False)
+    record_set = rcf.record_set(numpy_data, channel="train", encrypt=False)
     rcf.fit(record_set)
     if endpoint_exists:
         response = update_model(rcf, existing_endpoint_name)
@@ -61,18 +60,19 @@ def deploy_model(rcf):
     rcf_inference = rcf.deploy(
         initial_instance_count=INFERENCE_INSTANCE_COUNT,
         instance_type=INFERENCE_INSTANCE,
-        wait=False
+        wait=False,
     )
     endpoints = sagemaker_client.list_endpoints()
     endpoint_exists = False
     existing_endpoint_name = ""
     for e in endpoints:
-        if e['EndpointName'].startswith("randomcutforest"):
-            existing_endpoint_name = e['EndpointName']
+        if e["EndpointName"].startswith("randomcutforest"):
+            existing_endpoint_name = e["EndpointName"]
             endpoint_exists = True
             break
 
     return rcf_inference
+
 
 def update_model(rcf, endpoint_name):
     rcf_inference = rcf.deploy(
@@ -80,9 +80,10 @@ def update_model(rcf, endpoint_name):
         instance_type=INFERENCE_INSTANCE,
         wait=False,
         update_endpoint=True,
-        endpoint_name=endpoint_name
+        endpoint_name=endpoint_name,
     )
     return rcf_inference
+
 
 def input_data(file_name, s3_bucket):
     file_object_data = s3_client.get_object(Bucket=s3_bucket, Key=file_name)
