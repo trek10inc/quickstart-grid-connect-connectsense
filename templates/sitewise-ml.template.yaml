@@ -109,6 +109,10 @@ Conditions:
   SNSProvided:
     "Fn::Not": [Condition: SNSNotProvided]
 
+  UsingDefaultBucket: !Equals
+    - !Ref QSS3BucketName
+    - 'aws-quickstart'
+
 Resources:
   ScriptBucket:
     Type: AWS::S3::Bucket
@@ -147,21 +151,46 @@ Resources:
             Version: "2012-10-17"
             Statement:
               - Effect: "Allow"
-                Action: "s3:*"
+                Action:
+                  - "s3:AbortMultipartUpload"
+                  - "s3:GetBucketAcl"
+                  - "s3:ListBucket"
+                  - "s3:GetBucketVersioning"
+                  - "s3:PutObject"
+                  - "s3:ListAllMyBuckets"
+                  - "s3:GetObject"
+                  - "s3:PutBucketLogging"
+                  - "s3:ListBucketMultipartUploads"
                 Resource:
-                  - !Sub arn:aws:s3:::${ScriptBucket}
-                  - !Sub arn:aws:s3:::${ScriptBucket}/*
-                  - !Sub arn:aws:s3:::${SitewiseDataArchiveBucket}
-                  - !Sub arn:aws:s3:::${SitewiseDataArchiveBucket}/*
-                  - !Sub arn:aws:s3:::${TempETLWorkspaceBucket}
-                  - !Sub arn:aws:s3:::${TempETLWorkspaceBucket}/*
-                  - !Sub arn:aws:s3:::${MLStageBucket}
-                  - !Sub arn:aws:s3:::${MLStageBucket}/*
+                  - !Sub arn:${AWS::Partition}:s3:::${ScriptBucket}
+                  - !Sub arn:${AWS::Partition}:s3:::${ScriptBucket}/*
+                  - !Sub arn:${AWS::Partition}:s3:::${SitewiseDataArchiveBucket}
+                  - !Sub arn:${AWS::Partition}:s3:::${SitewiseDataArchiveBucket}/*
+                  - !Sub arn:${AWS::Partition}:s3:::${TempETLWorkspaceBucket}
+                  - !Sub arn:${AWS::Partition}:s3:::${TempETLWorkspaceBucket}/*
+                  - !Sub arn:${AWS::Partition}:s3:::${MLStageBucket}
+                  - !Sub arn:${AWS::Partition}:s3:::${MLStageBucket}/*
               - Effect: "Allow"
-                Action: "logs:*"
+                Action:
+                  - "logs:CreateLogStream"
+                  - "logs:CreateLogGroup"
+                  - "logs:PutLogEvents"
                 Resource: "*"
               - Effect: "Allow"
-                Action: "glue:*"
+                Action:
+                  - "glue:CreateJob"
+                  - "glue:CreateTable"
+                  - "glue:CreateSchema"
+                  - "glue:CreateClassifier"
+                  - "glue:CreateDatabase"
+                  - "glue:CreateRegistry"
+                  - "glue:CreatePartition"
+                  - "glue:GetTables"
+                  - "glue:GetDatabase"
+                  - "glue:GetSchema"
+                  - "glue:GetUserDefinedFunctions"
+                  - "glue:GetJobRuns"
+                  - "glue:GetJobs"
                 Resource: "*"
 
   IngestCrawler:
@@ -195,7 +224,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri:
-        Bucket: !Ref QSS3BucketName
+        Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
         Key: !Sub ${QSS3KeyPrefix}functions/packages/StartGlueJobFunction.zip
       FunctionName: !Sub ${Client}-start-glue-handler
       Timeout: 900
@@ -219,14 +248,15 @@ Resources:
           Statement:
             - Effect: Allow
               Action:
-                - glue:*
+                - "glue:StartCrawler"
+                - "glue:StartJobRun"
               Resource: '*'
 
   StartMLTrainingDeploymentFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri:
-        Bucket: !Ref QSS3BucketName
+        Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
         Key: !Sub ${QSS3KeyPrefix}functions/packages/StartMLTrainingDeploymentFunction.zip
       FunctionName: !Sub ${Client}-start-ml-training-deployment
       Timeout: 900
@@ -245,22 +275,62 @@ Resources:
       Environment:
         Variables:
           LOGGING_LEVEL: INFO
-          ROLE_ARN: !Sub arn:aws:iam::${AWS::AccountId}:role/${Client}}-sagemaker-role
+          ROLE_ARN: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Client}}-sagemaker-role
           MODEL_OUTPUT_PREFIX: !Ref ModelOutputPrefix
       Policies:
         - Version: '2012-10-17'
           Statement:
             - Effect: Allow
-              Action: "sagemaker:*"
+              Action:
+                - "sagemaker:DescribeAction"
+                - "sagemaker:InvokeEndpoint"
+                - "sagemaker:DescribeEndpointConfig"
+                - "sagemaker:CreateAction"
+                - "sagemaker:ListProjects"
+                - "sagemaker:CreateTrainingJob"
+                - "sagemaker:ListTrainingJobs"
+                - "sagemaker:CreateAlgorithm"
+                - "sagemaker:DescribeTrainingJob"
+                - "sagemaker:UpdateArtifact"
+                - "sagemaker:UpdateAction"
+                - "sagemaker:CreateModel"
+                - "sagemaker:UpdateEndpoint"
+                - "sagemaker:ListAlgorithms"
+                - "sagemaker:CreateEndpoint"
+                - "sagemaker:CreateArtifact"
+                - "sagemaker:ListDomains"
+                - "sagemaker:ListEndpoints"
+                - "sagemaker:CreateModelPackage"
+                - "sagemaker:PutRecord"
+                - "sagemaker:GetRecord"
+                - "sagemaker:CreateEndpointConfig"
+                - "sagemaker:StopTrainingJob"
+                - "sagemaker:UpdateTrainingJob"
+                - "sagemaker:DescribeModel"
+                - "sagemaker:ListArtifacts"
+                - "sagemaker:DescribeEndpoint"
+                - "sagemaker:ListModels"
               Resource: '*'
             - Effect: Allow
-              Action: "s3:*"
+              Action:
+                - "s3:AbortMultipartUpload"
+                - "s3:GetBucketAcl"
+                - "s3:ListBucket"
+                - "s3:GetBucketVersioning"
+                - "s3:PutObject"
+                - "s3:ListAllMyBuckets"
+                - "s3:GetObject"
+                - "s3:PutBucketLogging"
+                - "s3:ListBucketMultipartUploads"
               Resource: "*"
             - Effect: Allow
               Action: "iam:PassRole"
               Resource: "*"
             - Effect: "Allow"
-              Action: "logs:*"
+              Action:
+                - "logs:CreateLogStream"
+                - "logs:CreateLogGroup"
+                - "logs:PutLogEvents"
               Resource: "*"
 
 
@@ -281,15 +351,55 @@ Resources:
             Version: "2012-10-17"
             Statement:
               - Effect: "Allow"
-                Action: "s3:*"
+                Action:
+                  - "s3:AbortMultipartUpload"
+                  - "s3:GetBucketAcl"
+                  - "s3:ListBucket"
+                  - "s3:GetBucketVersioning"
+                  - "s3:PutObject"
+                  - "s3:ListAllMyBuckets"
+                  - "s3:GetObject"
+                  - "s3:PutBucketLogging"
+                  - "s3:ListBucketMultipartUploads"
                 Resource:
-                  - !Sub arn:aws:s3:::${MLStageBucket}
-                  - !Sub arn:aws:s3:::${MLStageBucket}/*
+                  - !Sub arn:${AWS::Partition}:s3:::${MLStageBucket}
+                  - !Sub arn:${AWS::Partition}:s3:::${MLStageBucket}/*
               - Effect: "Allow"
-                Action: "logs:*"
+                Action:
+                  - "logs:CreateLogStream"
+                  - "logs:CreateLogGroup"
+                  - "logs:PutLogEvents"
                 Resource: "*"
               - Effect: "Allow"
-                Action: "sagemaker:*"
+                Action:
+                  - "sagemaker:DescribeAction"
+                  - "sagemaker:InvokeEndpoint"
+                  - "sagemaker:DescribeEndpointConfig"
+                  - "sagemaker:CreateAction"
+                  - "sagemaker:ListProjects"
+                  - "sagemaker:CreateTrainingJob"
+                  - "sagemaker:ListTrainingJobs"
+                  - "sagemaker:CreateAlgorithm"
+                  - "sagemaker:DescribeTrainingJob"
+                  - "sagemaker:UpdateArtifact"
+                  - "sagemaker:UpdateAction"
+                  - "sagemaker:CreateModel"
+                  - "sagemaker:UpdateEndpoint"
+                  - "sagemaker:ListAlgorithms"
+                  - "sagemaker:CreateEndpoint"
+                  - "sagemaker:CreateArtifact"
+                  - "sagemaker:ListDomains"
+                  - "sagemaker:ListEndpoints"
+                  - "sagemaker:CreateModelPackage"
+                  - "sagemaker:PutRecord"
+                  - "sagemaker:GetRecord"
+                  - "sagemaker:CreateEndpointConfig"
+                  - "sagemaker:StopTrainingJob"
+                  - "sagemaker:UpdateTrainingJob"
+                  - "sagemaker:DescribeModel"
+                  - "sagemaker:ListArtifacts"
+                  - "sagemaker:DescribeEndpoint"
+                  - "sagemaker:ListModels"
                 Resource: "*"
 
 
@@ -297,7 +407,7 @@ Resources:
     Type: AWS::Serverless::LayerVersion
     Properties:
       ContentUri:
-        Bucket: !Ref QSS3BucketName
+        Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
         Key: !Sub ${QSS3KeyPrefix}functions/packages/MLSharedLibraries.zip
       CompatibleRuntimes:
         - python3.8
@@ -494,7 +604,8 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
-                  - firehose:*
+                  - "firehose:PutRecord"
+                  - "firehose:PutRecordBatch"
                 Resource: !GetAtt DataFirehose.Arn
 
         - PolicyName: LogInCloudWatch
@@ -568,7 +679,7 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -582,7 +693,11 @@ Resources:
             Version: '2012-10-17'
             Statement:
               - Effect: Allow
-                Action: kinesis:*
+                Action:
+                  - "kinesis:ListStreams"
+                  - "kinesis:GetShardIterator"
+                  - "kinesis:GetRecords"
+                  - "kinesis:DescribeStream"
                 Resource: "*"
         - PolicyName: IoTSitewiseAccessPolicy
           PolicyDocument:
@@ -596,7 +711,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri:
-        Bucket: !Ref QSS3BucketName
+        Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
         Key: !Sub ${QSS3KeyPrefix}functions/packages/TransformationHandler.zip
       FunctionName: !Sub ${Client}-transform-handler
       Role: !GetAtt TransformationHandlerRole.Arn
@@ -611,7 +726,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri:
-        Bucket: !Ref QSS3BucketName
+        Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
         Key: !Sub ${QSS3KeyPrefix}functions/packages/InferenceFunction.zip
       FunctionName: !Sub ${Client}-inference-handler
       Timeout: 90
@@ -622,7 +737,7 @@ Resources:
           MODEL_OUTPUT_PREFIX: !Ref ModelOutputPrefix
           PARAM_NAME: !Ref ThresholdSSMParam
           TOPIC_ARN: !If [SNSProvided,
-                          !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:${SNSAlertTopicName}",
+                          !Sub "arn:${AWS::Partition}:sns:${AWS::Region}:${AWS::AccountId}:${SNSAlertTopicName}",
                           !Ref AnomolyNotificationTopic]
       Events:
         S3Event:
@@ -635,16 +750,55 @@ Resources:
         - Version: '2012-10-17'
           Statement:
             - Effect: Allow
-              Action: "s3:*"
+              Action:
+                  - "s3:AbortMultipartUpload"
+                  - "s3:GetBucketAcl"
+                  - "s3:ListBucket"
+                  - "s3:GetBucketVersioning"
+                  - "s3:PutObject"
+                  - "s3:ListAllMyBuckets"
+                  - "s3:GetObject"
+                  - "s3:PutBucketLogging"
+                  - "s3:ListBucketMultipartUploads"
               Resource: "*"
             - Effect: Allow
-              Action: "sagemaker:*"
+              Action:
+                - "sagemaker:DescribeAction"
+                - "sagemaker:InvokeEndpoint"
+                - "sagemaker:DescribeEndpointConfig"
+                - "sagemaker:CreateAction"
+                - "sagemaker:ListProjects"
+                - "sagemaker:CreateTrainingJob"
+                - "sagemaker:ListTrainingJobs"
+                - "sagemaker:CreateAlgorithm"
+                - "sagemaker:DescribeTrainingJob"
+                - "sagemaker:UpdateArtifact"
+                - "sagemaker:UpdateAction"
+                - "sagemaker:CreateModel"
+                - "sagemaker:UpdateEndpoint"
+                - "sagemaker:ListAlgorithms"
+                - "sagemaker:CreateEndpoint"
+                - "sagemaker:CreateArtifact"
+                - "sagemaker:ListDomains"
+                - "sagemaker:ListEndpoints"
+                - "sagemaker:CreateModelPackage"
+                - "sagemaker:PutRecord"
+                - "sagemaker:GetRecord"
+                - "sagemaker:CreateEndpointConfig"
+                - "sagemaker:StopTrainingJob"
+                - "sagemaker:UpdateTrainingJob"
+                - "sagemaker:DescribeModel"
+                - "sagemaker:ListArtifacts"
+                - "sagemaker:DescribeEndpoint"
+                - "sagemaker:ListModels"
               Resource: "*"
             - Effect: Allow
-              Action: "ssm:*"
+              Action:
+                - "ssm:GetParameter"
+                - "ssm:DescribeParameters"
               Resource: "*"
             - Effect: Allow
-              Action: "sns:*"
+              Action: "sns:Publish"
               Resource: "*"
 
 
