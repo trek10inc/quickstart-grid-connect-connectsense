@@ -225,7 +225,7 @@ Resources:
     Properties:
       CodeUri:
         Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
-        Key: !Sub ${QSS3KeyPrefix}functions/packages/StartGlueJobFunction.zip
+        Key: !Sub ${QSS3KeyPrefix}functions/packages/StartGlueJobFunction/lambda.zip
       FunctionName: !Sub ${Client}-start-glue-handler
       Timeout: 900
       Handler: handlers.glue_trigger_lambda.handler
@@ -257,7 +257,7 @@ Resources:
     Properties:
       CodeUri:
         Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
-        Key: !Sub ${QSS3KeyPrefix}functions/packages/StartMLTrainingDeploymentFunction.zip
+        Key: !Sub ${QSS3KeyPrefix}functions/packages/StartMLTrainingDeploymentFunction/lambda.zip
       FunctionName: !Sub ${Client}-start-ml-training-deployment
       Timeout: 900
       Handler: handlers.training_and_deployment_lambda.handler
@@ -408,7 +408,7 @@ Resources:
     Properties:
       ContentUri:
         Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
-        Key: !Sub ${QSS3KeyPrefix}functions/packages/MLSharedLibraries.zip
+        Key: !Sub ${QSS3KeyPrefix}functions/packages/MLSharedLibraries/lambda.zip
       CompatibleRuntimes:
         - python3.8
     Metadata:
@@ -712,7 +712,7 @@ Resources:
     Properties:
       CodeUri:
         Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
-        Key: !Sub ${QSS3KeyPrefix}functions/packages/TransformationHandler.zip
+        Key: !Sub ${QSS3KeyPrefix}functions/packages/TransformationHandler/lambda.zip
       FunctionName: !Sub ${Client}-transform-handler
       Role: !GetAtt TransformationHandlerRole.Arn
       Timeout: 90
@@ -727,7 +727,7 @@ Resources:
     Properties:
       CodeUri:
         Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
-        Key: !Sub ${QSS3KeyPrefix}functions/packages/InferenceFunction.zip
+        Key: !Sub ${QSS3KeyPrefix}functions/packages/InferenceFunction/lambda.zip
       FunctionName: !Sub ${Client}-inference-handler
       Timeout: 90
       Handler: handlers.inference_lambda.handler
