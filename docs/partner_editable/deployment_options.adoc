@@ -1,1 +1,6 @@
-This Quick Start provides one deployment option, which builds a new Amazon API Gateway and provisions AWS IoT Analytics in your account. 
+This Quick Start provides two deployment options:
+
+    1. Base Option - Builds a new Amazon API Gateway
+and provisions AWS IoT Analytics in your account.
+    2. Sitewise + ML - Builds IoT Sitewise, AWS Glue, and Sagemaker resources in your account in order to enable
+predictive maintenance notifications on your power cord

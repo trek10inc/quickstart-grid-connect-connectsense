@@ -75,7 +75,30 @@ Parameters:
     Type: Number
     MinValue: 1
 
+  DeploySitewiseML:
+    Description: If True, will deploy the sitewise ML Stack
+    Type: String
+    Default: false
+    AllowedValues: [ true, false ]
+
+Conditions:
+  ShouldCreateSitewiseML:
+    !Equals [ true, !Ref DeploySitewiseML ]
+
 Resources:
+
+  SitewiseMLDeployment:
+    Type: AWS::CloudFormation::Stack
+    Condition: ShouldCreateSitewiseML
+    Properties:
+      Parameters:
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        SNSAlertTopicName: !GetAtt AlertsTopic.TopicName
+      TemplateURL: !Sub "https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}templates/sitewise-ml.template.yaml"
+
+
+
   ApiGatewayApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -276,7 +299,7 @@ Resources:
     Properties:
       CodeUri: 
         Bucket: !Ref QSS3BucketName
-        Key: !Sub ${QSS3KeyPrefix}functions/packages/UploadDeviceManifest.zip
+        Key: !Sub ${QSS3KeyPrefix}functions/packages/UploadDeviceManifest/lambda.zip
       Handler: api.upload_manifest
       Role: !GetAtt ProvisionApiLambdaRole.Arn
       Runtime: python3.8
@@ -297,7 +320,7 @@ Resources:
     Properties:
       CodeUri: 
           Bucket: !Ref QSS3BucketName
-          Key: !Sub ${QSS3KeyPrefix}functions/packages/ProcessAlerts.zip
+          Key: !Sub ${QSS3KeyPrefix}functions/packages/ProcessAlerts/lambda.zip
       Handler: alerts.process_alerts
       Role: !GetAtt ProcessAlertsLambdaRole.Arn
       Runtime: python3.8
