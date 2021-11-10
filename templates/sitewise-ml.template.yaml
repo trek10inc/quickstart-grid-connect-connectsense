@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
-Description: 'SAM Template Gridconnect Sitewise Quickstart Addition'
+Description: 'SAM Template Gridconnect Sitewise Quickstart Addition (qs-1set4jtij)'
 Metadata:
   QuickStartDocumentation:
     EntrypointName: "Parameters for deploying this Quick Start"
@@ -175,13 +175,13 @@ Resources:
                   - "logs:CreateLogStream"
                   - "logs:CreateLogGroup"
                   - "logs:PutLogEvents"
-                Resource: "*"
+                Resource: 
+                  - !Sub arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:*
+                  - !Sub arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:*:log-stream:*
               - Effect: "Allow"
                 Action:
-                  - "glue:CreateJob"
                   - "glue:CreateTable"
                   - "glue:CreateSchema"
-                  - "glue:CreateClassifier"
                   - "glue:CreateDatabase"
                   - "glue:CreateRegistry"
                   - "glue:CreatePartition"
@@ -189,6 +189,18 @@ Resources:
                   - "glue:GetDatabase"
                   - "glue:GetSchema"
                   - "glue:GetUserDefinedFunctions"
+                Resource:  
+                  - !Sub arn:${AWS::Partition}:glue:${AWS::Region}:${AWS::AccountId}:catalog
+                  - !Sub arn:${AWS::Partition}:glue:${AWS::Region}:${AWS::AccountId}:database/*
+                  - !Sub arn:${AWS::Partition}:glue:${AWS::Region}:${AWS::AccountId}:table/*/*
+                  - !Sub arn:${AWS::Partition}:glue:${AWS::Region}:${AWS::AccountId}:registry/*
+                  - !Sub arn:${AWS::Partition}:glue:${AWS::Region}:${AWS::AccountId}:schema/*
+                  - !Sub arn:${AWS::Partition}:glue:${AWS::Region}:${AWS::AccountId}:userDefinedFunction/*/*
+
+              - Effect: "Allow"
+                Action:
+                  - "glue:CreateJob"
+                  - "glue:CreateClassifier"
                   - "glue:GetJobRuns"
                   - "glue:GetJobs"
                 Resource: "*"
@@ -286,20 +298,15 @@ Resources:
                 - "sagemaker:InvokeEndpoint"
                 - "sagemaker:DescribeEndpointConfig"
                 - "sagemaker:CreateAction"
-                - "sagemaker:ListProjects"
                 - "sagemaker:CreateTrainingJob"
-                - "sagemaker:ListTrainingJobs"
                 - "sagemaker:CreateAlgorithm"
                 - "sagemaker:DescribeTrainingJob"
                 - "sagemaker:UpdateArtifact"
                 - "sagemaker:UpdateAction"
                 - "sagemaker:CreateModel"
                 - "sagemaker:UpdateEndpoint"
-                - "sagemaker:ListAlgorithms"
                 - "sagemaker:CreateEndpoint"
                 - "sagemaker:CreateArtifact"
-                - "sagemaker:ListDomains"
-                - "sagemaker:ListEndpoints"
                 - "sagemaker:CreateModelPackage"
                 - "sagemaker:PutRecord"
                 - "sagemaker:GetRecord"
@@ -307,8 +314,28 @@ Resources:
                 - "sagemaker:StopTrainingJob"
                 - "sagemaker:UpdateTrainingJob"
                 - "sagemaker:DescribeModel"
-                - "sagemaker:ListArtifacts"
                 - "sagemaker:DescribeEndpoint"
+              Resource:  
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:action/*
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:endpoint/*
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:endpoint-config/*
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:training-job/*
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:algorithm/*
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:training-job/*
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:artifact/*
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:model/*
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:model-package/*
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:model-package-group/*
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:feature-group/*
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:model/*
+            - Effect: Allow
+              Action:
+                - "sagemaker:ListProjects"
+                - "sagemaker:ListTrainingJobs"
+                - "sagemaker:ListAlgorithms"
+                - "sagemaker:ListDomains"
+                - "sagemaker:ListEndpoints"
+                - "sagemaker:ListArtifacts"
                 - "sagemaker:ListModels"
               Resource: '*'
             - Effect: Allow
@@ -318,20 +345,28 @@ Resources:
                 - "s3:ListBucket"
                 - "s3:GetBucketVersioning"
                 - "s3:PutObject"
-                - "s3:ListAllMyBuckets"
                 - "s3:GetObject"
                 - "s3:PutBucketLogging"
                 - "s3:ListBucketMultipartUploads"
+              Resource: 
+                - !Sub arn:${AWS::Partition}:s3:::*
+                - !Sub arn:${AWS::Partition}:s3:::*/*
+            - Effect: Allow
+              Action:
+                - "s3:ListAllMyBuckets"
               Resource: "*"
             - Effect: Allow
               Action: "iam:PassRole"
-              Resource: "*"
+              Resource: 
+                - !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/*
             - Effect: "Allow"
               Action:
                 - "logs:CreateLogStream"
                 - "logs:CreateLogGroup"
                 - "logs:PutLogEvents"
-              Resource: "*"
+              Resource: 
+                - !Sub arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:*
+                - !Sub arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:*:log-stream:*
 
 
   SagemakerRole:
@@ -369,27 +404,24 @@ Resources:
                   - "logs:CreateLogStream"
                   - "logs:CreateLogGroup"
                   - "logs:PutLogEvents"
-                Resource: "*"
-              - Effect: "Allow"
+                Resource: 
+                  - !Sub arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:*
+                  - !Sub arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:*:log-stream:*
+              - Effect: Allow
                 Action:
                   - "sagemaker:DescribeAction"
                   - "sagemaker:InvokeEndpoint"
                   - "sagemaker:DescribeEndpointConfig"
                   - "sagemaker:CreateAction"
-                  - "sagemaker:ListProjects"
                   - "sagemaker:CreateTrainingJob"
-                  - "sagemaker:ListTrainingJobs"
                   - "sagemaker:CreateAlgorithm"
                   - "sagemaker:DescribeTrainingJob"
                   - "sagemaker:UpdateArtifact"
                   - "sagemaker:UpdateAction"
                   - "sagemaker:CreateModel"
                   - "sagemaker:UpdateEndpoint"
-                  - "sagemaker:ListAlgorithms"
                   - "sagemaker:CreateEndpoint"
                   - "sagemaker:CreateArtifact"
-                  - "sagemaker:ListDomains"
-                  - "sagemaker:ListEndpoints"
                   - "sagemaker:CreateModelPackage"
                   - "sagemaker:PutRecord"
                   - "sagemaker:GetRecord"
@@ -397,10 +429,30 @@ Resources:
                   - "sagemaker:StopTrainingJob"
                   - "sagemaker:UpdateTrainingJob"
                   - "sagemaker:DescribeModel"
-                  - "sagemaker:ListArtifacts"
                   - "sagemaker:DescribeEndpoint"
+                Resource:  
+                    - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:action/*
+                    - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:endpoint/*
+                    - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:endpoint-config/*
+                    - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:training-job/*
+                    - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:algorithm/*
+                    - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:training-job/*
+                    - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:artifact/*
+                    - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:model/*
+                    - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:model-package/*
+                    - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:model-package-group/*
+                    - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:feature-group/*
+                    - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:model/*
+              - Effect: Allow
+                Action:
+                  - "sagemaker:ListProjects"
+                  - "sagemaker:ListTrainingJobs"
+                  - "sagemaker:ListAlgorithms"
+                  - "sagemaker:ListDomains"
+                  - "sagemaker:ListEndpoints"
+                  - "sagemaker:ListArtifacts"
                   - "sagemaker:ListModels"
-                Resource: "*"
+                Resource: '*'
 
 
   MLSharedLibraries:
@@ -431,7 +483,8 @@ Resources:
             Statement:
               - Effect: Allow
                 Action: iotsitewise:BatchPutAssetPropertyValue
-                Resource: "*"
+                Resource: 
+                  - !Sub arn:${AWS::Partition}:iotsitewise:${AWS::Region}:${AWS::AccountId}:asset/*
 
   PowerCordAssetModel:
     Type: AWS::IoTSiteWise::AssetModel
@@ -618,7 +671,9 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                   - logs:PutRetentionPolicy
-                Resource: "*"
+                Resource: 
+                  - !Sub arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:*
+                  - !Sub arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:*:log-stream:*
 
   DataFirehoseRole:
       Type: AWS::IAM::Role
@@ -695,17 +750,22 @@ Resources:
               - Effect: Allow
                 Action:
                   - "kinesis:ListStreams"
+                Resource: "*"
+              - Effect: Allow
+                Action:
                   - "kinesis:GetShardIterator"
                   - "kinesis:GetRecords"
                   - "kinesis:DescribeStream"
-                Resource: "*"
+                Resource: 
+                  - !Sub arn:${AWS::Partition}:kinesis:${AWS::Region}:${AWS::AccountId}:stream/*
         - PolicyName: IoTSitewiseAccessPolicy
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
               - Effect: Allow
                 Action: iotsitewise:DescribeAssetModel
-                Resource: "*"
+                Resource: 
+                  - !Sub arn:${AWS::Partition}:iotsitewise:${AWS::Region}:${AWS::AccountId}:asset-model/*
 
   TransformationHandler:
     Type: AWS::Serverless::Function
@@ -751,15 +811,20 @@ Resources:
           Statement:
             - Effect: Allow
               Action:
-                  - "s3:AbortMultipartUpload"
-                  - "s3:GetBucketAcl"
-                  - "s3:ListBucket"
-                  - "s3:GetBucketVersioning"
-                  - "s3:PutObject"
-                  - "s3:ListAllMyBuckets"
-                  - "s3:GetObject"
-                  - "s3:PutBucketLogging"
-                  - "s3:ListBucketMultipartUploads"
+                - "s3:AbortMultipartUpload"
+                - "s3:GetBucketAcl"
+                - "s3:ListBucket"
+                - "s3:GetBucketVersioning"
+                - "s3:PutObject"
+                - "s3:GetObject"
+                - "s3:PutBucketLogging"
+                - "s3:ListBucketMultipartUploads"
+              Resource: 
+                - !Sub arn:${AWS::Partition}:s3:::*
+                - !Sub arn:${AWS::Partition}:s3:::*/*
+            - Effect: Allow
+              Action:
+                - "s3:ListAllMyBuckets"
               Resource: "*"
             - Effect: Allow
               Action:
@@ -767,20 +832,15 @@ Resources:
                 - "sagemaker:InvokeEndpoint"
                 - "sagemaker:DescribeEndpointConfig"
                 - "sagemaker:CreateAction"
-                - "sagemaker:ListProjects"
                 - "sagemaker:CreateTrainingJob"
-                - "sagemaker:ListTrainingJobs"
                 - "sagemaker:CreateAlgorithm"
                 - "sagemaker:DescribeTrainingJob"
                 - "sagemaker:UpdateArtifact"
                 - "sagemaker:UpdateAction"
                 - "sagemaker:CreateModel"
                 - "sagemaker:UpdateEndpoint"
-                - "sagemaker:ListAlgorithms"
                 - "sagemaker:CreateEndpoint"
                 - "sagemaker:CreateArtifact"
-                - "sagemaker:ListDomains"
-                - "sagemaker:ListEndpoints"
                 - "sagemaker:CreateModelPackage"
                 - "sagemaker:PutRecord"
                 - "sagemaker:GetRecord"
@@ -788,18 +848,43 @@ Resources:
                 - "sagemaker:StopTrainingJob"
                 - "sagemaker:UpdateTrainingJob"
                 - "sagemaker:DescribeModel"
-                - "sagemaker:ListArtifacts"
                 - "sagemaker:DescribeEndpoint"
+              Resource:  
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:action/*
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:endpoint/*
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:endpoint-config/*
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:training-job/*
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:algorithm/*
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:training-job/*
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:artifact/*
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:model/*
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:model-package/*
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:model-package-group/*
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:feature-group/*
+                  - !Sub arn:${AWS::Partition}:sagemaker:${AWS::Region}:${AWS::AccountId}:model/*
+            - Effect: Allow
+              Action:
+                - "sagemaker:ListProjects"
+                - "sagemaker:ListTrainingJobs"
+                - "sagemaker:ListAlgorithms"
+                - "sagemaker:ListDomains"
+                - "sagemaker:ListEndpoints"
+                - "sagemaker:ListArtifacts"
                 - "sagemaker:ListModels"
-              Resource: "*"
+              Resource: '*'
             - Effect: Allow
               Action:
                 - "ssm:GetParameter"
+              Resource: 
+                - !Sub arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/*
+            - Effect: Allow
+              Action:
                 - "ssm:DescribeParameters"
               Resource: "*"
             - Effect: Allow
               Action: "sns:Publish"
-              Resource: "*"
+              Resource: 
+                - !Sub arn:${AWS::Partition}:sns:${AWS::Region}:${AWS::AccountId}:*
 
 
   ThresholdSSMParam:
