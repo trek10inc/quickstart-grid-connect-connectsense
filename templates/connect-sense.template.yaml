@@ -82,6 +82,7 @@ Parameters:
     AllowedValues: [ true, false ]
 
 Conditions:
+  UsingDefaultBucket: !Equals [!Ref QsS3BucketName, 'aws-quickstart']
   ShouldCreateSitewiseML:
     !Equals [ true, !Ref DeploySitewiseML ]
 
@@ -95,7 +96,10 @@ Resources:
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         SNSAlertTopicName: !GetAtt AlertsTopic.TopicName
-      TemplateURL: !Sub "https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}templates/sitewise-ml.template.yaml"
+      TemplateURL: TemplateURL: !Sub
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QsS3KeyPrefix}templates/sitewise-ml.template.yaml
+        - S3Bucket: !If [UsingDefaultBucket, !Sub '${QsS3BucketName}-${AWS::Region}', !Ref 'QsS3BucketName']
+          S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref 'QsS3BucketRegion']
 
 
 
