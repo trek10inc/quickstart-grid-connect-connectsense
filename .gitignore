@@ -1,6 +1,5 @@
 .idea/
 *.DS_Store
 taskcat_outputs/
-/docs/index.html
 test_commands/
 archive/
