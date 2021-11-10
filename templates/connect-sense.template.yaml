@@ -63,6 +63,10 @@ Parameters:
       See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html 
       and https://aws-quickstart.github.io/option1.html.
     Type: String
+  QSS3BucketRegion:
+    Default: 'us-east-1'
+    Description: The AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value.
+    Type: String
   DataRetentionDays:
     Description: Number of days that the system retains data from ConnectSense devices.
     Default: 30
@@ -82,7 +86,7 @@ Parameters:
     AllowedValues: [ true, false ]
 
 Conditions:
-  UsingDefaultBucket: !Equals [!Ref QsS3BucketName, 'aws-quickstart']
+  UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
   ShouldCreateSitewiseML:
     !Equals [ true, !Ref DeploySitewiseML ]
 
@@ -96,10 +100,10 @@ Resources:
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         SNSAlertTopicName: !GetAtt AlertsTopic.TopicName
-      TemplateURL: TemplateURL: !Sub
-        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QsS3KeyPrefix}templates/sitewise-ml.template.yaml
-        - S3Bucket: !If [UsingDefaultBucket, !Sub '${QsS3BucketName}-${AWS::Region}', !Ref 'QsS3BucketName']
-          S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref 'QsS3BucketRegion']
+      TemplateURL: !Sub
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/sitewise-ml.template.yaml
+        - S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref 'QSS3BucketName']
+          S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref 'QSS3BucketRegion']
 
 
 
