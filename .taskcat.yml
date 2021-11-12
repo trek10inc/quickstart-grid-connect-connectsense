@@ -28,7 +28,7 @@ project:
 tests:
   grid-connect-connectsense-w-sitewise:
     parameters:
-      DeploySitewiseML: true
+      DeploySitewiseML: 'true'
       QSS3BucketName: "$[taskcat_autobucket]"
     template: templates/connect-sense.template.yaml
     regions: # no availability of AWS::IoTAnalytics in other regions
