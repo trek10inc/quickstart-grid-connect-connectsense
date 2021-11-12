@@ -1,7 +1,7 @@
 project:
   name: quickstart-grid-connect-connectsense
   owner: quickstart-eng@amazon.com
-  s3_regional_buckets: True
+  s3_regional_buckets: true
   lambda_source_path: functions/source
   lambda_zip_path: functions/packages
   regions:
