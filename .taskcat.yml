@@ -32,7 +32,7 @@ tests:
     template: templates/connect-sense.template.yaml
     regions: # no availability of AWS::IoTAnalytics in other regions
       - us-east-1
-      - us-west-2
+#      - us-west-2
 #      - ap-southeast-2
 #      - eu-central-1
 #      - eu-west-1
@@ -43,7 +43,7 @@ tests:
     template: templates/sitewise-ml.template.yaml
     regions: # no availability of AWS::IoTAnalytics in other regions
       - us-east-1
-      - us-west-2
+#      - us-west-2
 #      - ap-southeast-2
 #      - eu-central-1
 #      - eu-west-1
