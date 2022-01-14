@@ -7,7 +7,9 @@ Metadata:
   cfn-lint:
     config:
       ignore_checks:
-        - E9101
+        - E9007
+      ignore_reasons:
+        - E9007: "There is a bug that is flagging 'Making sure all ARNs leverage {AWS::Partition}' on the root 'resources', however everything is done correctly."
   About:
     Description: >
       This template is provided by Grid Connect and Trek10 in collaboration with AWS. It creates a
