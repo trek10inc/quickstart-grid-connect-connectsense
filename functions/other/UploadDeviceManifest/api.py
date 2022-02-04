@@ -10,7 +10,7 @@ from manifest import ManifestIterator
 
 iot = boto3.client("iot")
 
-POLICY_NAME = os.environ['DEVICE_POLICY']
+POLICY_NAME = os.environ["DEVICE_POLICY"]
 
 
 class ManifestImportException(Exception):
@@ -97,5 +97,10 @@ def upload_manifest(event, context):
         print(error)
         return {
             "statusCode": 500,
-            "body": json.dumps({"type": type(error).__name__, "error": error,}),
+            "body": json.dumps(
+                {
+                    "type": type(error).__name__,
+                    "error": error,
+                }
+            ),
         }

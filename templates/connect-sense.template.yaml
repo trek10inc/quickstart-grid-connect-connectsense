@@ -12,7 +12,7 @@ Metadata:
       #   - 'execute' is part of the API GW
   About:
     Description: >
-      This template is provided by Grid Connect and Trek10 in collaboration with AWS. It creates a 
+      This template is provided by Grid Connect and Trek10 in collaboration with AWS. It creates a
       serverless IoT backend for developers who want to build applications for the ConnectSense Smart Power Cord.
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -44,24 +44,28 @@ Parameters:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
     ConstraintDescription: Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
     Default: aws-quickstart
-    Description: Name of the S3 bucket for your copy of the Quick Start assets. 
-      Keep the default name unless you are customizing the template. 
-      Changing the name updates code references to point to a new Quick 
-      Start location. This name can include numbers, lowercase letters, 
-      uppercase letters, and hyphens, but do not start or end with a hyphen (-). 
+    Description: Name of the S3 bucket for your copy of the Quick Start assets.
+      Keep the default name unless you are customizing the template.
+      Changing the name updates code references to point to a new Quick
+      Start location. This name can include numbers, lowercase letters,
+      uppercase letters, and hyphens, but do not start or end with a hyphen (-).
       See https://aws-quickstart.github.io/option1.html.
     Type: String
   QSS3KeyPrefix:
     AllowedPattern: ^([0-9a-zA-Z-.]+/)*$
     ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), dots (.) and forward slash (/). The prefix should end with a forward slash (/).
     Default: quickstart-grid-connect-connectsense/
-    Description: S3 key prefix that is used to simulate a directory for your copy of the 
-      Quick Start assets. Keep the default prefix unless you are customizing 
-      the template. Changing this prefix updates code references to point to 
-      a new Quick Start location. This prefix can include numbers, lowercase 
-      letters, uppercase letters, hyphens (-), and forward slashes (/). End with a forward slash. 
-      See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html 
+    Description: S3 key prefix that is used to simulate a directory for your copy of the
+      Quick Start assets. Keep the default prefix unless you are customizing
+      the template. Changing this prefix updates code references to point to
+      a new Quick Start location. This prefix can include numbers, lowercase
+      letters, uppercase letters, hyphens (-), and forward slashes (/). End with a forward slash.
+      See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html
       and https://aws-quickstart.github.io/option1.html.
+    Type: String
+  QSS3BucketRegion:
+    Default: 'us-east-1'
+    Description: The AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value.
     Type: String
   DataRetentionDays:
     Description: Number of days that the system retains data from ConnectSense devices.
@@ -75,7 +79,34 @@ Parameters:
     Type: Number
     MinValue: 1
 
+  DeploySitewiseML:
+    Description: If True, will deploy the sitewise ML Stack
+    Type: String
+    Default: 'false'
+    AllowedValues: [ 'true', 'false']
+
+Conditions:
+  UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
+  ShouldCreateSitewiseML:
+    !Equals [ true, !Ref DeploySitewiseML ]
+
 Resources:
+
+  SitewiseMLDeployment:
+    Type: AWS::CloudFormation::Stack
+    Condition: ShouldCreateSitewiseML
+    Properties:
+      Parameters:
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        SNSAlertTopicName: !GetAtt AlertsTopic.TopicName
+      TemplateURL: !Sub
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/sitewise-ml.template.yaml
+        - S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref 'QSS3BucketName']
+          S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref 'QSS3BucketRegion']
+
+
+
   ApiGatewayApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -274,9 +305,9 @@ Resources:
   UploadDeviceManifest:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: 
+      CodeUri:
         Bucket: !Ref QSS3BucketName
-        Key: !Sub ${QSS3KeyPrefix}functions/packages/UploadDeviceManifest.zip
+        Key: !Sub ${QSS3KeyPrefix}functions/packages/UploadDeviceManifest/lambda.zip
       Handler: api.upload_manifest
       Role: !GetAtt ProvisionApiLambdaRole.Arn
       Runtime: python3.8
@@ -295,9 +326,9 @@ Resources:
   ProcessAlerts:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: 
+      CodeUri:
           Bucket: !Ref QSS3BucketName
-          Key: !Sub ${QSS3KeyPrefix}functions/packages/ProcessAlerts.zip
+          Key: !Sub ${QSS3KeyPrefix}functions/packages/ProcessAlerts/lambda.zip
       Handler: alerts.process_alerts
       Role: !GetAtt ProcessAlertsLambdaRole.Arn
       Runtime: python3.8
